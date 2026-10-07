@@ -2,21 +2,134 @@
 <html>
 <head>
     <title>Restaurant POS</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .menu, .order {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        #orderList {
+            min-height: 100px;
+        }
+
+        .total {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>🍽️ Welcome to Our Restaurant</h1>
-    <p>Restaurant Point of Sale System</p>
+    <h1>🍽️ Restaurant POS</h1>
 
-    <h2>Menu</h2>
+    <div class="container">
 
-    <button>Chicken Meal - ₱120</button>
-    <button>Burger - ₱100</button>
-    <button>French Fries - ₱60</button>
-    <button>Soft Drink - ₱40</button>
+        <div class="menu">
+            <h2>Menu</h2>
 
-    <h2>Order</h2>
-    <p>No items added yet.</p>
+            <button onclick="addItem('Chicken Meal', 120)">
+                Chicken Meal - ₱120
+            </button>
+
+            <button onclick="addItem('Burger', 100)">
+                Burger - ₱100
+            </button>
+
+            <button onclick="addItem('French Fries', 60)">
+                French Fries - ₱60
+            </button>
+
+            <button onclick="addItem('Soft Drink', 40)">
+                Soft Drink - ₱40
+            </button>
+        </div>
+
+        <div class="order">
+            <h2>Current Order</h2>
+
+            <div id="orderList">
+                No items added yet.
+            </div>
+
+            <div class="total">
+                Total: ₱<span id="total">0</span>
+            </div>
+
+            <button onclick="checkout()">
+                Checkout
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let total = 0;
+        let order = [];
+
+        function addItem(name, price) {
+            order.push(name);
+            total += price;
+
+            document.getElementById("orderList").innerHTML =
+                order.join("<br>");
+
+            document.getElementById("total").innerText = total;
+        }
+
+        function checkout() {
+            if (order.length === 0) {
+                alert("Please add an item first.");
+            } else {
+                alert("Order completed! Total: ₱" + total);
+
+                order = [];
+                total = 0;
+
+                document.getElementById("orderList").innerHTML =
+                    "No items added yet.";
+
+                document.getElementById("total").innerText = "0";
+            }
+        }
+    </script>
 
 </body>
 </html>
