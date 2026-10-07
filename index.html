@@ -1,135 +1,514 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Restaurant POS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Maison Restaurant POS</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
             margin: 0;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f1ec;
+            color: #2f2a26;
         }
 
-        h1 {
+        header {
+            background: #2f2a26;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #d8d0c6;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 180px 1fr 330px;
+            min-height: calc(100vh - 90px);
+        }
+
+        .categories {
+            background: #3b3530;
+            padding: 20px 12px;
+        }
+
+        .categories h3 {
+            color: white;
             text-align: center;
+            margin-top: 0;
         }
 
-        .container {
-            display: flex;
-            gap: 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        .menu, .order {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            flex: 1;
-        }
-
-        button {
+        .category-btn {
             width: 100%;
-            padding: 15px;
-            margin: 8px 0;
+            padding: 13px 8px;
+            margin-bottom: 10px;
             border: none;
             border-radius: 8px;
-            background: #333;
+            background: #574e47;
             color: white;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #555;
+        .category-btn:hover {
+            background: #75685d;
+        }
+
+        .menu {
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .menu h2 {
+            margin-top: 0;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .menu-card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.4;
+            min-height: 55px;
+        }
+
+        .portion {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 7px;
+            background: #2f2a26;
+            color: white;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #51483f;
+        }
+
+        .order {
+            background: white;
+            padding: 22px;
+            border-left: 1px solid #ddd;
+        }
+
+        .order h2 {
+            margin-top: 0;
         }
 
         #orderList {
-            min-height: 100px;
+            min-height: 200px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .order-item button {
+            border: none;
+            background: #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .summary {
+            border-top: 2px solid #eee;
+            margin-top: 20px;
+            padding-top: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
         }
 
         .total {
-            font-size: 22px;
+            font-size: 23px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 15px;
+        }
+
+        .checkout {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #2f2a26;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .clear {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .categories {
+                display: flex;
+                gap: 8px;
+                overflow-x: auto;
+            }
+
+            .categories h3 {
+                display: none;
+            }
+
+            .category-btn {
+                min-width: 120px;
+            }
+
+            .order {
+                border-left: none;
+                border-top: 1px solid #ddd;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>🍽️ Restaurant POS</h1>
+<header>
+    <h1>La Maison Restaurant</h1>
+    <p>Restaurant Point of Sale System</p>
+</header>
 
-    <div class="container">
+<div class="layout">
 
-        <div class="menu">
-            <h2>Menu</h2>
+    <aside class="categories">
+        <h3>Categories</h3>
 
-            <button onclick="addItem('Chicken Meal', 120)">
-                Chicken Meal - ₱120
-            </button>
+        <button class="category-btn" onclick="showCategory('all')">All Menu</button>
+        <button class="category-btn" onclick="showCategory('appetizer')">Appetizers</button>
+        <button class="category-btn" onclick="showCategory('salad')">Salads</button>
+        <button class="category-btn" onclick="showCategory('main')">Main Course</button>
+        <button class="category-btn" onclick="showCategory('dessert')">Desserts</button>
+        <button class="category-btn" onclick="showCategory('drink')">Beverages</button>
+        <button class="category-btn" onclick="showCategory('wine')">Wine</button>
+    </aside>
 
-            <button onclick="addItem('Burger', 100)">
-                Burger - ₱100
-            </button>
+    <main class="menu">
+        <h2>Menu</h2>
 
-            <button onclick="addItem('French Fries', 60)">
-                French Fries - ₱60
-            </button>
+        <div class="menu-grid" id="menuGrid"></div>
+    </main>
 
-            <button onclick="addItem('Soft Drink', 40)">
-                Soft Drink - ₱40
-            </button>
+    <aside class="order">
+        <h2>Current Order</h2>
+
+        <div id="orderList">
+            No items added yet.
         </div>
 
-        <div class="order">
-            <h2>Current Order</h2>
+        <div class="summary">
+            <div class="summary-row">
+                <span>Items</span>
+                <span id="itemCount">0</span>
+            </div>
 
-            <div id="orderList">
-                No items added yet.
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₱<span id="subtotal">0</span></span>
             </div>
 
             <div class="total">
                 Total: ₱<span id="total">0</span>
             </div>
 
-            <button onclick="checkout()">
+            <button class="checkout" onclick="checkout()">
                 Checkout
             </button>
+
+            <button class="clear" onclick="clearOrder()">
+                Clear Order
+            </button>
         </div>
+    </aside>
 
-    </div>
+</div>
 
-    <script>
-        let total = 0;
-        let order = [];
+<script>
 
-        function addItem(name, price) {
-            order.push(name);
-            total += price;
+const menu = [
+    {
+        name: "Bruschetta",
+        category: "appetizer",
+        price: 180,
+        portion: "150 g",
+        description: "Toasted bread topped with fresh tomatoes, garlic, basil, and olive oil."
+    },
+    {
+        name: "Caesar Salad",
+        category: "salad",
+        price: 220,
+        portion: "220 g",
+        description: "Crisp romaine lettuce with croutons, Parmesan cheese, and Caesar dressing."
+    },
+    {
+        name: "Salmon Salad",
+        category: "salad",
+        price: 320,
+        portion: "250 g",
+        description: "Grilled salmon with mixed greens, cucumber, tomato, and lemon dressing."
+    },
+    {
+        name: "Greek Salad",
+        category: "salad",
+        price: 230,
+        portion: "230 g",
+        description: "Fresh lettuce, tomato, cucumber, olives, and feta cheese."
+    },
+    {
+        name: "Grilled Tuna Steak",
+        category: "main",
+        price: 420,
+        portion: "250 g",
+        description: "Fresh tuna steak grilled to perfection and served with seasonal vegetables."
+    },
+    {
+        name: "Fettuccine Alfredo",
+        category: "main",
+        price: 280,
+        portion: "300 g",
+        description: "Fettuccine pasta tossed in a rich and creamy Parmesan Alfredo sauce."
+    },
+    {
+        name: "Grilled Salmon with Lemon Butter Sauce",
+        category: "main",
+        price: 480,
+        portion: "280 g",
+        description: "Grilled salmon served with lemon butter sauce and seasonal vegetables."
+    },
+    {
+        name: "Honey Glazed Salmon",
+        category: "main",
+        price: 460,
+        portion: "280 g",
+        description: "Tender grilled salmon coated with a sweet and savory honey glaze."
+    },
+    {
+        name: "Creamy Tuscan Salmon",
+        category: "main",
+        price: 480,
+        portion: "300 g",
+        description: "Salmon in creamy sauce with spinach, tomatoes, garlic, and Parmesan."
+    },
+    {
+        name: "Crème Brûlée",
+        category: "dessert",
+        price: 180,
+        portion: "150 g",
+        description: "Smooth vanilla custard topped with a crisp caramelized sugar crust."
+    },
+    {
+        name: "Iced Lemon Tea",
+        category: "drink",
+        price: 100,
+        portion: "350 ml",
+        description: "Refreshing iced tea blended with fresh lemon."
+    },
+    {
+        name: "Chardonnay",
+        category: "wine",
+        price: 280,
+        portion: "150 ml",
+        description: "Smooth white wine with gentle fruit flavors and a balanced finish."
+    },
+    {
+        name: "Sauvignon Blanc",
+        category: "wine",
+        price: 280,
+        portion: "150 ml",
+        description: "Crisp white wine with citrus and tropical fruit notes."
+    }
+];
 
-            document.getElementById("orderList").innerHTML =
-                order.join("<br>");
+let order = [];
 
-            document.getElementById("total").innerText = total;
-        }
+function displayMenu(category = "all") {
 
-        function checkout() {
-            if (order.length === 0) {
-                alert("Please add an item first.");
-            } else {
-                alert("Order completed! Total: ₱" + total);
+    const menuGrid = document.getElementById("menuGrid");
 
-                order = [];
-                total = 0;
+    menuGrid.innerHTML = "";
 
-                document.getElementById("orderList").innerHTML =
-                    "No items added yet.";
+    const filteredMenu = category === "all"
+        ? menu
+        : menu.filter(item => item.category === category);
 
-                document.getElementById("total").innerText = "0";
-            }
-        }
-    </script>
+    filteredMenu.forEach(item => {
+
+        menuGrid.innerHTML += `
+            <div class="menu-card">
+
+                <h3>${item.name}</h3>
+
+                <div class="description">
+                    ${item.description}
+                </div>
+
+                <div class="portion">
+                    Portion: ${item.portion}
+                </div>
+
+                <div class="price">
+                    ₱${item.price}
+                </div>
+
+                <button class="add-btn"
+                    onclick="addItem('${item.name}', ${item.price})">
+                    Add to Order
+                </button>
+
+            </div>
+        `;
+    });
+}
+
+function showCategory(category) {
+    displayMenu(category);
+}
+
+function addItem(name, price) {
+
+    order.push({
+        name: name,
+        price: price
+    });
+
+    updateOrder();
+}
+
+function updateOrder() {
+
+    const orderList = document.getElementById("orderList");
+
+    if (order.length === 0) {
+        orderList.innerHTML = "No items added yet.";
+    } else {
+
+        orderList.innerHTML = "";
+
+        order.forEach((item, index) => {
+
+            orderList.innerHTML += `
+                <div class="order-item">
+
+                    <span>${item.name}</span>
+
+                    <span>
+                        ₱${item.price}
+                        <button onclick="removeItem(${index})">×</button>
+                    </span>
+
+                </div>
+            `;
+        });
+    }
+
+    const total = order.reduce(
+        (sum, item) => sum + item.price,
+        0
+    );
+
+    document.getElementById("itemCount").innerText = order.length;
+    document.getElementById("subtotal").innerText = total;
+    document.getElementById("total").innerText = total;
+}
+
+function removeItem(index) {
+
+    order.splice(index, 1);
+
+    updateOrder();
+}
+
+function clearOrder() {
+
+    order = [];
+
+    updateOrder();
+}
+
+function checkout() {
+
+    if (order.length === 0) {
+
+        alert("Please add an item first.");
+
+        return;
+    }
+
+    const total = order.reduce(
+        (sum, item) => sum + item.price,
+        0
+    );
+
+    alert("Order completed!\nTotal: ₱" + total);
+
+    clearOrder();
+}
+
+displayMenu();
+
+</script>
+
+</body>
+</html>
 
 </body>
 </html>
