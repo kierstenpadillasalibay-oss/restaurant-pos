@@ -485,11 +485,8 @@ function clearOrder() {
 }
 
 function checkout() {
-
     if (order.length === 0) {
-
         alert("Please add an item first.");
-
         return;
     }
 
@@ -498,8 +495,26 @@ function checkout() {
         0
     );
 
-    alert("Order completed!\nTotal: ₱" + total);
+    const orderNumber = "LM-" + Date.now().toString().slice(-6);
+    const date = new Date().toLocaleString();
 
+    let receipt = "LA MAISON RESTAURANT\n";
+    receipt += "========================\n";
+    receipt += "Order No.: " + orderNumber + "\n";
+    receipt += "Date: " + date + "\n";
+    receipt += "------------------------\n";
+
+    order.forEach(item => {
+        receipt += item.name + "\n";
+        receipt += "  ₱" + item.price.toFixed(2) + "\n";
+    });
+
+    receipt += "------------------------\n";
+    receipt += "TOTAL: ₱" + total.toFixed(2) + "\n";
+    receipt += "========================\n";
+    receipt += "Thank you for dining with us!";
+
+    alert(receipt);
     clearOrder();
 }
 
