@@ -327,7 +327,175 @@ margin-top: 18px;
         box-shadow: none;
     }
 }
-</style>
+/* LA MAISON - PREMIUM POS INTERFACE */
+
+body {
+    background: #f5f0e8;
+    color: #30271f;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background: linear-gradient(135deg, #211a16, #493629);
+    padding: 26px 32px;
+    border-bottom: 3px solid #c5a46d;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+header h1 {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.layout {
+    grid-template-columns: 190px minmax(0, 1fr) 340px;
+    gap: 0;
+}
+
+.categories {
+    background: #30271f;
+    padding: 24px 14px;
+}
+
+.categories h3 {
+    color: #d8bd8b;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+}
+
+.category-btn {
+    background: #44372d;
+    border: 1px solid #594838;
+    border-radius: 8px;
+    padding: 14px 10px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.category-btn:hover {
+    background: #806443;
+    transform: translateX(3px);
+}
+
+.menu {
+    padding: 30px;
+}
+
+.menu h2 {
+    font-family: Georgia, serif;
+    font-size: 28px;
+    margin-bottom: 24px;
+}
+
+.menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 22px;
+}
+
+.menu-card {
+    border: 1px solid #e8dfd2;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 5px 18px rgba(48, 39, 31, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(48, 39, 31, 0.12);
+}
+
+.menu-card h3 {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.description {
+    color: #766c61;
+    line-height: 1.6;
+}
+
+.price {
+    color: #916b35;
+    font-size: 21px;
+    margin: 16px 0;
+}
+
+.add-btn {
+    background: #30271f;
+    border: 1px solid #30271f;
+    padding: 13px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.add-btn:hover {
+    background: #87663e;
+}
+
+.order {
+    padding: 26px 22px;
+    border-left: 1px solid #e7ded2;
+    box-shadow: -4px 0 15px rgba(48, 39, 31, 0.04);
+}
+
+.order h2 {
+    font-family: Georgia, serif;
+    font-size: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #d7bd91;
+}
+
+.order-item {
+    align-items: center;
+    line-height: 1.5;
+}
+
+.summary {
+    border-top: 2px solid #e8dfd2;
+}
+
+.total {
+    color: #916b35;
+    font-size: 25px;
+}
+
+.checkout {
+    background: #87663e;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.checkout:hover {
+    background: #30271f;
+}
+
+.clear {
+    color: #5c5146;
+}
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .menu {
+        padding: 20px;
+    }
+
+    .order {
+        border-left: none;
+        border-top: 2px solid #d7bd91;
+    }
+}
+    </style>
 </head>
 
 <body>
