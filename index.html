@@ -528,6 +528,39 @@ header p {
     font-size: 22px;
     font-weight: bold;
 }
+   /* WELCOME SECTION */
+
+.welcome-section {
+    background: linear-gradient(135deg, #30271f, #6b5038);
+    color: #fffdf8;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 16px;
+    border-bottom: 4px solid #c5a46d;
+    box-shadow: 0 8px 20px rgba(48, 39, 31, 0.12);
+}
+
+.welcome-section .welcome-label {
+    color: #e1c48f;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin: 0 0 12px;
+}
+
+.welcome-section h2 {
+    font-family: Georgia, serif;
+    font-size: 30px;
+    margin: 0 0 12px;
+    line-height: 1.3;
+}
+
+.welcome-section p:last-child {
+    color: #eee2d2;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 0;
+} 
     </style>
 </head>
 
@@ -553,7 +586,14 @@ header p {
     </aside>
 
     <main class="menu">
-        <h2>Menu</h2>
+
+    <div class="welcome-section">
+        <p class="welcome-label">WELCOME TO LA MAISON</p>
+        <h2>Exceptional Dining, Every Day</h2>
+        <p>Discover our selection of delicious dishes, prepared with care and served with elegance.</p>
+    </div>
+
+    <h2>Our Menu</h2>
 
         <div class="menu-grid" id="menuGrid"></div>
     </main>
