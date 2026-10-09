@@ -561,6 +561,84 @@ header p {
     line-height: 1.7;
     margin-bottom: 0;
 } 
+        /* MAIN NAVIGATION */
+
+.main-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    padding: 16px 24px;
+    background: #fffdf8;
+    border-bottom: 1px solid #e4d5bf;
+    box-shadow: 0 3px 10px rgba(48, 39, 31, 0.05);
+}
+
+.main-nav a {
+    color: #30271f;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 0;
+    transition: color 0.2s;
+}
+
+.main-nav a:hover {
+    color: #a17a43;
+}
+
+@media (max-width: 600px) {
+    .main-nav {
+        gap: 18px;
+        padding: 14px 10px;
+        flex-wrap: wrap;
+    }
+
+    .main-nav a {
+        font-size: 13px;
+    }
+}
+       /* HOME SECTION */
+
+.home-section {
+    padding: 55px 30px;
+    text-align: center;
+    color: #fffdf8;
+    background: linear-gradient(135deg, #30271f, #806044);
+    border-bottom: 4px solid #c5a46d;
+}
+
+.home-label {
+    color: #e1c48f;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.home-section h2 {
+    font-family: Georgia, serif;
+    font-size: 38px;
+    margin: 15px 0;
+}
+
+.home-section p {
+    line-height: 1.7;
+}
+
+.reserve-btn {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 13px 24px;
+    background: #c5a46d;
+    color: #211a16;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.reserve-btn:hover {
+    background: #e1c48f;
+} 
         /* PREMIUM ORDER SUMMARY */
 
 .order {
@@ -606,6 +684,102 @@ header p {
 .checkout:hover {
     background: #30271f;
 }
+        /* RESERVATION SECTION */
+
+.reservation-section {
+    padding: 55px 20px;
+    background: #f5f0e8;
+}
+
+.reservation-card {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 35px;
+    background: #fffdf8;
+    border: 1px solid #e4d5bf;
+    border-top: 4px solid #c5a46d;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(48, 39, 31, 0.08);
+}
+
+.reservation-label {
+    color: #916b35;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-align: center;
+}
+
+.reservation-card h2 {
+    font-family: Georgia, serif;
+    font-size: 30px;
+    text-align: center;
+    color: #30271f;
+    margin-bottom: 10px;
+}
+
+.reservation-card > p:not(.reservation-label) {
+    text-align: center;
+    color: #766c61;
+    margin-bottom: 28px;
+}
+
+#reservationForm label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #30271f;
+}
+
+#reservationForm input,
+#reservationForm select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8c8b2;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+}
+
+.reservation-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.reservation-submit {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background: #87663e;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reservation-submit:hover {
+    background: #30271f;
+}
+
+#reservationMessage {
+    color: #426b45;
+    font-weight: bold;
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .reservation-card {
+        padding: 22px;
+    }
+
+    .reservation-fields {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
     </style>
 </head>
 
@@ -616,7 +790,68 @@ header p {
     <p>Restaurant Point of Sale System</p>
 </header>
 
-<div class="layout">
+<nav class="main-nav">
+    <a href="#home">Home</a>
+    <a href="#reservation">Reservations</a>
+    <a href="#menu-pos">Menu / POS</a>
+</nav>
+<section class="home-section" id="home">
+    <p class="home-label">WELCOME TO LA MAISON</p>
+    <h2>A Taste of Elegance</h2>
+    <p>Enjoy delicious dishes, warm hospitality, and a memorable dining experience.</p>
+    <a href="#reservation" class="reserve-btn">Reserve a Table</a>
+</section>
+<section class="reservation-section" id="reservation">
+    <div class="reservation-card">
+        <p class="reservation-label">YOUR TABLE AWAITS</p>
+        <h2>Reserve a Table</h2>
+        <p>Plan your next dining experience at La Maison.</p>
+
+        <form id="reservationForm">
+            <label for="customerName">Full Name</label>
+            <input type="text" id="customerName"
+                   placeholder="Enter your full name" required>
+
+            <label for="customerPhone">Contact Number</label>
+            <input type="tel" id="customerPhone"
+                   placeholder="Enter your contact number" required>
+
+            <div class="reservation-fields">
+                <div>
+                    <label for="reservationDate">Date</label>
+                    <input type="date" id="reservationDate" required>
+                </div>
+
+                <div>
+                    <label for="reservationTime">Time</label>
+                    <input type="time" id="reservationTime" required>
+                </div>
+            </div>
+
+            <label for="guestCount">Number of Guests</label>
+            <select id="guestCount" required>
+                <option value="">Select number of guests</option>
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests</option>
+                <option value="6">6 guests</option>
+                <option value="7">7 guests</option>
+                <option value="8">8 guests</option>
+                <option value="9">9 guests</option>
+                <option value="10">10 guests</option>
+            </select>
+
+            <button type="submit" class="reservation-submit">
+                Request Reservation
+            </button>
+
+            <p id="reservationMessage" role="status"></p>
+        </form>
+    </div>
+</section>
+<div class="layout" id="menu-pos">
 
     <aside class="categories">
         <h3>Categories</h3>
@@ -920,7 +1155,21 @@ document.getElementById("receiptModal").style.display = "flex";
 
 
 displayMenu();
+document.getElementById("reservationForm").addEventListener("submit", function(event) {
+    event.preventDefault();
 
+    const name = document.getElementById("customerName").value.trim();
+    const date = document.getElementById("reservationDate").value;
+    const time = document.getElementById("reservationTime").value;
+    const guests = document.getElementById("guestCount").value;
+
+    document.getElementById("reservationMessage").textContent =
+        "Thank you, " + name + "! Your reservation request for " +
+        guests + " guest(s) on " + date + " at " + time +
+        " has been received. Please contact the restaurant to confirm.";
+
+    this.reset();
+});
 </script>
 <div id="receiptModal" style="display:none;">
     <div class="receipt-box">
