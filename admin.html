@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Maison | Admin Portal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f6f1e8;color:#30271f}
+header{background:#30271f;color:#fffdf8;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.brand{font-family:Georgia,serif;font-size:25px}
+header small{color:#d4b47b;letter-spacing:2px;display:block;margin-top:5px}
+header a{color:#f0d9ac;text-decoration:none;font-size:13px}
+.container{max-width:1100px;margin:auto;padding:30px 20px}
+h1{font-family:Georgia,serif;font-weight:normal;font-size:32px;margin-bottom:8px}
+.muted{color:#817568;line-height:1.6}
+.notice{background:#fff9e9;border:1px solid #e4d1a8;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.6;margin:22px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:25px 0}
+.card{background:#fffdf8;border:1px solid #e5d8c5;border-radius:13px;padding:22px}
+.card span{color:#987443;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.card h2{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:12px 0 5px}
+.panel{background:#fffdf8;border:1px solid #e5d8c5;border-radius:13px;padding:24px;margin-top:20px}
+.panel h2{font-family:Georgia,serif;font-weight:normal;margin-top:0}
+.links{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;padding:12px 16px;border-radius:7px;text-decoration:none;font-size:13px;font-weight:bold;background:#30271f;color:#fffdf8;border:1px solid #30271f}
+.btn.light{background:#fffdf8;color:#30271f;border-color:#d8c5aa}
+footer{text-align:center;padding:25px;color:#938779;font-size:12px}
+@media(max-width:700px){header{padding:20px;align-items:flex-start}.brand{font-size:21px}.grid{grid-template-columns:1fr}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">La Maison Restaurant</div>
+    <small>ADMINISTRATION</small>
+  </div>
+  <a href="portal.html">← Back to Portal</a>
+</header>
+
+<main class="container">
+  <h1>Admin Dashboard</h1>
+  <p class="muted">Welcome to your restaurant management workspace.</p>
+
+  <div class="notice">
+    <strong>Preview mode:</strong> This dashboard is currently a visual starting point.
+    Live reservations, sales figures, and customer records are not connected yet.
+  </div>
+
+  <section class="grid">
+    <div class="card">
+      <span>Reservations</span>
+      <h2>—</h2>
+      <p class="muted">Reservation data will appear after database setup.</p>
+    </div>
+    <div class="card">
+      <span>Orders Today</span>
+      <h2>—</h2>
+      <p class="muted">Live order counts are not connected yet.</p>
+    </div>
+    <div class="card">
+      <span>Sales Today</span>
+      <h2>—</h2>
+      <p class="muted">Sales totals will appear after POS integration.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Restaurant Management</h2>
+    <p class="muted">Quick links to the current website and POS.</p>
+    <div class="links">
+      <a class="btn" href="index.html">Open Restaurant POS</a>
+      <a class="btn light" href="portal.html">Portal Home</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Coming Next</h2>
+    <p class="muted">We will add reservation management, table availability, menu editing, order history, and sales reports after setting up secure admin access and the database.</p>
+  </section>
+</main>
+
+<footer>© La Maison Restaurant · Admin Portal</footer>
+</body>
+</html>
