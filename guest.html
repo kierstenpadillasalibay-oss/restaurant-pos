@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Maison | Guest Portal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f6f1e8;color:#30271f}
+header{background:#30271f;color:#fffdf8;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.brand{font-family:Georgia,serif;font-size:25px}
+header small{display:block;color:#d4b47b;letter-spacing:2px;margin-top:5px}
+header a{color:#f0d9ac;text-decoration:none;font-size:13px}
+.hero{background:#e9ddc9;text-align:center;padding:55px 20px}
+.eyebrow{color:#987443;letter-spacing:4px;font-size:11px;font-weight:bold}
+h1,h2{font-family:Georgia,serif;font-weight:normal}
+h1{font-size:40px;margin:15px 0}
+.hero p{color:#766c61;line-height:1.8;max-width:500px;margin:0 auto}
+.container{max-width:950px;margin:auto;padding:35px 20px}
+.section-title{text-align:center;font-size:29px;margin:10px 0}
+.muted{color:#817568;line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:25px}
+.card{background:#fffdf8;border:1px solid #e5d8c5;border-radius:13px;padding:24px}
+.card h2{font-size:24px;margin:0 0 10px}
+.btn{display:inline-block;background:#30271f;color:#fffdf8;padding:13px 18px;border-radius:7px;text-decoration:none;font-size:13px;margin-top:12px}
+.btn.light{background:#fffdf8;color:#30271f;border:1px solid #d8c5aa}
+.notice{background:#fff9e9;border:1px solid #e4d1a8;padding:14px;border-radius:9px;font-size:13px;line-height:1.6;margin-top:25px}
+footer{text-align:center;padding:25px;color:#938779;font-size:12px}
+@media(max-width:600px){header{padding:20px}.brand{font-size:21px}.cards{grid-template-columns:1fr}h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">La Maison Restaurant</div>
+    <small>GUEST PORTAL</small>
+  </div>
+  <a href="portal.html">← Back to Portal</a>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">YOUR DINING EXPERIENCE</div>
+  <h1>Welcome to La Maison</h1>
+  <p>Discover our menu and plan your next dining experience in a warm and elegant setting.</p>
+</section>
+
+<main class="container">
+  <h2 class="section-title">How may we serve you?</h2>
+  <p class="muted" style="text-align:center">Choose what you would like to do today.</p>
+
+  <section class="cards">
+    <div class="card">
+      <h2>Explore Our Menu</h2>
+      <p class="muted">Browse our restaurant's food and beverage selections.</p>
+      <a class="btn" href="index.html#pos">View Menu / POS</a>
+    </div>
+
+    <div class="card">
+      <h2>Reserve a Table</h2>
+      <p class="muted">Plan your visit and submit a reservation request.</p>
+      <a class="btn" href="index.html#reservation">Make a Reservation</a>
+    </div>
+  </section>
+
+  <div class="notice">
+    <strong>Please note:</strong> Online reservation status and live table availability are not connected yet. A reservation request must be confirmed by the restaurant.
+  </div>
+
+  <div style="text-align:center;margin-top:25px">
+    <a class="btn light" href="index.html">Return to Restaurant Website</a>
+  </div>
+</main>
+
+<footer>© La Maison Restaurant</footer>
+</body>
+</html>
