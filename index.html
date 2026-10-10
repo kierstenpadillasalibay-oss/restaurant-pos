@@ -1350,11 +1350,31 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
     userMessage.textContent = "You: " + question;
     chatMessages.appendChild(userMessage);
 
-    const reply = document.createElement("p");
-    reply.textContent =
-      "Assistant: Thank you for asking! Please contact our restaurant team for assistance with this question.";
-    chatMessages.appendChild(reply);
+const reply = document.createElement("p");
+const q = question.toLowerCase();
 
+let answer = "";
+
+if (q.includes("recommend") || q.includes("best food")) {
+  answer = "We offer delicious Western dishes, including Grilled Salmon, Grilled Tuna Steak, Fettuccine Alfredo, and Grilled Ribeye Steak. Which type of food do you prefer?";
+} else if (q.includes("salmon")) {
+  answer = "Our Grilled Salmon with Lemon Butter Sauce is a delicious seafood option.";
+} else if (q.includes("seafood") || q.includes("fish")) {
+  answer = "You might enjoy Grilled Salmon with Lemon Butter Sauce or Grilled Tuna Steak.";
+} else if (q.includes("menu") || q.includes("food")) {
+  answer = "Our menu features appetizers, soups, salads, seafood, pasta, steak, desserts, and beverages. What would you like to explore?";
+} else if (q.includes("hello") || q.includes("hi")) {
+  answer = "Hello! Welcome to La Maison Restaurant. How can I help you today?";
+} else if (q.includes("price") || q.includes("how much")) {
+  answer = "I'd be happy to help with prices. Please check our restaurant menu for the latest prices.";
+} else if (q.includes("reservation") || q.includes("book a table")) {
+  answer = "You can use the reservation form on our website to submit a booking request.";
+} else {
+  answer = "I can help with menu questions, food recommendations, seafood, and reservations. What would you like to know?";
+}
+
+reply.textContent = "Assistant: " + answer;
+chatMessages.appendChild(reply);
     chatInput.value = "";
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
