@@ -1226,5 +1226,27 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
         <button onclick="document.getElementById('receiptModal').style.display='none'">Close</button>
     </div>
 </div>
-</body>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC1WWHN98XmVPbI0Xml9gOAvnVNQgkmzlA",
+    authDomain: "la-maison-restaurant-99de2.firebaseapp.com",
+    projectId: "la-maison-restaurant-99de2",
+    storageBucket: "la-maison-restaurant-99de2.firebasestorage.app",
+    messagingSenderId: "935049108958",
+    appId: "1:935049108958:web:49413a629fe7562f31514f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+
+  console.log("La Maison Restaurant Firebase initialized!");
+</script></body>
 </html>
