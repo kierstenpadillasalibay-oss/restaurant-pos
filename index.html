@@ -1249,4 +1249,114 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
 
   console.log("La Maison Restaurant Firebase initialized!");
 </script></body>
+<!-- La Maison Restaurant Chat Assistant -->
+<style>
+  #chatButton {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: #3b2922;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 20px;
+    cursor: pointer;
+    z-index: 9999;
+  }
+
+  #chatBox {
+    display: none;
+    position: fixed;
+    right: 20px;
+    bottom: 85px;
+    width: 320px;
+    max-width: calc(100vw - 40px);
+    height: 400px;
+    background: #fffdf9;
+    border: 1px solid #d8c8b8;
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 9999;
+    box-shadow: 0 4px 18px #0003;
+    font-family: Arial, sans-serif;
+  }
+
+  #chatHeader {
+    background: #3b2922;
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+  }
+
+  #chatMessages {
+    height: 275px;
+    overflow-y: auto;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  #chatForm {
+    display: flex;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  #chatInput {
+    min-width: 0;
+    flex: 1;
+    padding: 9px;
+  }
+
+  #chatForm button {
+    background: #3b2922;
+    color: white;
+    border: none;
+    padding: 9px;
+    cursor: pointer;
+  }
+</style>
+
+<button id="chatButton" type="button">💬 Chat with us</button>
+
+<div id="chatBox">
+  <div id="chatHeader">La Maison Assistant</div>
+  <div id="chatMessages">
+    <p><b>Assistant:</b> Welcome to La Maison Restaurant! How can I help you today?</p>
+  </div>
+  <form id="chatForm">
+    <input id="chatInput" type="text" placeholder="Ask us something..." required>
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<script>
+  const chatButton = document.getElementById("chatButton");
+  const chatBox = document.getElementById("chatBox");
+  const chatForm = document.getElementById("chatForm");
+  const chatInput = document.getElementById("chatInput");
+  const chatMessages = document.getElementById("chatMessages");
+
+  chatButton.addEventListener("click", () => {
+    chatBox.style.display =
+      chatBox.style.display === "block" ? "none" : "block";
+  });
+
+  chatForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const question = chatInput.value.trim();
+    if (!question) return;
+
+    const userMessage = document.createElement("p");
+    userMessage.textContent = "You: " + question;
+    chatMessages.appendChild(userMessage);
+
+    const reply = document.createElement("p");
+    reply.textContent =
+      "Assistant: Thank you for asking! Please contact our restaurant team for assistance with this question.";
+    chatMessages.appendChild(reply);
+
+    chatInput.value = "";
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  });
+</script>
 </html>
