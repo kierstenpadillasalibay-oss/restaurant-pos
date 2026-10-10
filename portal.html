@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Maison Restaurant | Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f4ed, #e8dcc9);
+            color: #30271f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .portal {
+            width: 100%;
+            max-width: 900px;
+            background: #fffdf8;
+            border: 1px solid #e1d0b8;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 55px rgba(48, 39, 31, 0.12);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .welcome {
+            background: #30271f;
+            color: #fffdf8;
+            padding: 55px 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand {
+            color: #d4b47b;
+            letter-spacing: 5px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-family: Georgia, serif;
+            font-size: 39px;
+            font-weight: normal;
+            margin: 22px 0 15px;
+        }
+
+        .welcome p {
+            color: #e1d6c8;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .portal-content {
+            padding: 45px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .portal-content h2 {
+            font-family: Georgia, serif;
+            font-size: 29px;
+            font-weight: normal;
+            margin: 0 0 10px;
+        }
+
+        .subtitle {
+            color: #817568;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .portal-option {
+            display: block;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid #e1d0b8;
+            border-radius: 12px;
+            background: #fff;
+            color: #30271f;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .portal-option:hover {
+            border-color: #a78350;
+            background: #faf5eb;
+            transform: translateY(-2px);
+        }
+
+        .option-title {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .option-description {
+            display: block;
+            color: #817568;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .portal-option span:first-child {
+            color: #987443;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            text-align: center;
+            color: #987443;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 28px;
+            font-size: 11px;
+            color: #a09486;
+            text-align: center;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 14px;
+            }
+
+            .portal {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 32px;
+                margin: 14px 0 8px;
+            }
+
+            .portal-content {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="portal">
+        <section class="welcome">
+            <span class="brand">LA MAISON</span>
+            <h1>Fine Dining,<br>Beautiful Moments.</h1>
+            <p>
+                Welcome to La Maison Restaurant.
+                Enjoy a refined dining experience,
+                where every detail matters.
+            </p>
+        </section>
+
+        <section class="portal-content">
+            <h2>Welcome</h2>
+            <p class="subtitle">
+                Choose your portal to continue.
+            </p>
+
+            <a class="portal-option" href="admin.html">
+                <span class="option-title">♙ Admin Portal</span>
+                <span class="option-description">
+                    Manage reservations, orders, menu and sales.
+                </span>
+            </a>
+
+            <a class="portal-option" href="guest.html">
+                <span class="option-title">♧ Guest Portal</span>
+                <span class="option-description">
+                    Explore our menu and make a table reservation.
+                </span>
+            </a>
+
+            <a class="back-link" href="index.html">
+                ← Return to Restaurant Website
+            </a>
+
+            <div class="footer">
+                © La Maison Restaurant
+            </div>
+        </section>
+    </main>
+</body>
+</html>
