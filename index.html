@@ -1096,11 +1096,17 @@ function showCategory(category) {
 }
 
 function addItem(name, price) {
+    const existingItem = order.find(item => item.name === name);
 
-    order.push({
-        name: name,
-        price: price
-    });
+    if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
+    } else {
+        order.push({
+            name: name,
+            price: price,
+            quantity: 1
+        });
+    }
 
     updateOrder();
 }
@@ -1117,13 +1123,18 @@ function updateOrder() {
 
         order.forEach((item, index) => {
 
+            const quantity = item.quantity || 1;
+            const subtotal = item.price * quantity;
+
             orderList.innerHTML += `
                 <div class="order-item">
 
-                    <span>${item.name}</span>
+                    <span>
+                        ${item.name} x ${quantity}
+                    </span>
 
                     <span>
-                        ₱${item.price}
+                        ₱${subtotal.toFixed(2)}
                         <button onclick="removeItem(${index})">×</button>
                     </span>
 
@@ -1133,13 +1144,15 @@ function updateOrder() {
     }
 
     const total = order.reduce(
-        (sum, item) => sum + item.price,
+        (sum, item) => sum + (item.price * (item.quantity || 1)),
         0
     );
 
-    document.getElementById("itemCount").innerText = order.length;
-    document.getElementById("subtotal").innerText = total;
-    document.getElementById("total").innerText = total;
+    document.getElementById("itemCount").innerText =
+        order.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+    document.getElementById("subtotal").innerText = total.toFixed(2);
+    document.getElementById("total").innerText = total.toFixed(2);
 }
 
 function removeItem(index) {
@@ -1163,7 +1176,7 @@ function checkout() {
     }
 
     const total = order.reduce(
-        (sum, item) => sum + item.price,
+        (sum, item) => sum + (item.price * (item.quantity || 1)),
         0
     );
 
@@ -1177,23 +1190,26 @@ function checkout() {
     `;
 
     order.forEach(item => {
+        const quantity = item.quantity || 1;
+        const subtotal = item.price * quantity;
+
         details += `
             <div style="display:flex;justify-content:space-between;gap:10px;margin:8px 0;">
-                <span>${item.name}</span>
-                <span>₱${item.price.toFixed(2)}</span>
+                <span>${item.name} × ${quantity}</span>
+                <span>₱${subtotal.toFixed(2)}</span>
             </div>
         `;
     });
 
     document.getElementById("receiptDetails").innerHTML = details;
+
     document.getElementById("receiptTotal").innerText =
         "TOTAL: ₱" + total.toFixed(2);
 
-document.getElementById("receiptModal").style.display = "flex";
+    document.getElementById("receiptModal").style.display = "flex";
 
     clearOrder();
 }
-
 
 
 displayMenu();
