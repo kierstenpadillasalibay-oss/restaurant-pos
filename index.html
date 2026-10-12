@@ -1182,7 +1182,30 @@ function checkout() {
 
     const orderNumber = "LM-" + Date.now().toString().slice(-6);
     const date = new Date().toLocaleString();
+const completedSale = {
+    orderNumber: orderNumber,
+    date: new Date().toISOString(),
+    displayDate: date,
+    total: total,
+    items: order.map(item => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1
+    }))
+};
 
+const savedSales = JSON.parse(
+    localStorage.getItem("laMaisonSales") || "[]"
+);
+
+savedSales.push(completedSale);
+
+localStorage.setItem(
+    "laMaisonSales",
+    JSON.stringify(savedSales)
+);
+ updateSalesReport();
+    
     let details = `
         <p><strong>Order No.:</strong> ${orderNumber}</p>
         <p><strong>Date:</strong> ${date}</p>
@@ -1264,7 +1287,30 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
   window.firebaseDb = db;
 
   console.log("La Maison Restaurant Firebase initialized!");
-</script></body>
+    </script>
+<section id="salesReport" style="margin:30px;padding:24px;background:#fffdf8;border:1px solid #e4d5bf;border-top:4px solid #c5a46d;border-radius:12px;color:#30271f;">
+  <h2 style="font-family:Georgia,serif;">La Maison — Sales Report</h2>
+  <p>Completed sales recorded on this browser</p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:15px;">
+    <div style="flex:1;min-width:160px;padding:18px;background:#f5f0e8;border-radius:8px;">
+      <p>Total Sales</p>
+      <h3 id="reportTotalSales">₱0.00</h3>
+    </div>
+    <div style="flex:1;min-width:160px;padding:18px;background:#f5f0e8;border-radius:8px;">
+      <p>Completed Orders</p>
+      <h3 id="reportTotalOrders">0</h3>
+    </div>
+    <div style="flex:1;min-width:160px;padding:18px;background:#f5f0e8;border-radius:8px;">
+      <p>Average Order Value</p>
+      <h3 id="reportAverageOrder">₱0.00</h3>
+    </div>
+  </div>
+
+  <h3>Daily Sales</h3>
+  <div id="dailySalesList">Sales report will appear here.</div>
+</section>
+</body>
 <!-- La Maison Restaurant Chat Assistant -->
 <style>
   #chatButton {
@@ -1395,4 +1441,100 @@ chatMessages.appendChild(reply);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 </script>
+<script>
+function updateSalesReport() {
+    const sales = JSON.parse(
+        localStorage.getItem("laMaisonSales") || "[]"
+    );
+const totalSales = sales.reduce(
+    (sum, sale) => sum + Number(sale.total || 0),
+    0
+);
+
+    document.getElementById("reportTotalSales").textContent =
+        "₱" + totalSales.toFixed(2);
+
+    document.getElementById("reportTotalOrders").textContent =
+        sales.length;
+document.getElementById("reportAverageOrder").textContent =
+    "₱" + (sales.length ? totalSales / sales.length : 0).toFixed(2);
+
+const dailySales = {};
+
+sales.forEach(sale => {
+    const day = sale.date ? sale.date.slice(0, 10) : "Unknown date";
+    dailySales[day] = (dailySales[day] || 0) + Number(sale.total || 0);
+});
+
+const dailyList = document.getElementById("dailySalesList");
+
+if (Object.keys(dailySales).length === 0) {
+    dailyList.textContent = "No completed sales recorded yet.";
+} else {
+    dailyList.innerHTML = Object.keys(dailySales)
+        .sort()
+        .reverse()
+        .map(day =>
+            `<p style="padding:10px 0;border-bottom:1px solid #e4d5bf;">
+                ${day}: <strong>₱${dailySales[day].toFixed(2)}</strong>
+            </p>`
+        ).join("");
+}
+
+updateSalesReport();
+<script>
+function updateSalesReport() {
+    const sales = JSON.parse(
+        localStorage.getItem("laMaisonSales") || "[]"
+    );
+
+    const totalSales = sales.reduce(
+        (sum, sale) => sum + Number(sale.total || 0),
+        0
+    );
+
+    const totalElement = document.getElementById("reportTotalSales");
+    const ordersElement = document.getElementById("reportTotalOrders");
+    const averageElement = document.getElementById("reportAverageOrder");
+    const dailyList = document.getElementById("dailySalesList");
+
+    if (!totalElement || !ordersElement || !averageElement || !dailyList) {
+        return;
+    }
+
+    totalElement.textContent = "₱" + totalSales.toFixed(2);
+    ordersElement.textContent = sales.length;
+    averageElement.textContent =
+        "₱" + (sales.length ? totalSales / sales.length : 0).toFixed(2);
+
+    const dailySales = {};
+
+    sales.forEach(sale => {
+        const day = sale.date
+            ? sale.date.slice(0, 10)
+            : "Unknown date";
+
+        dailySales[day] = (dailySales[day] || 0) +
+            Number(sale.total || 0);
+    });
+
+    if (Object.keys(dailySales).length === 0) {
+        dailyList.textContent = "No completed sales recorded yet.";
+        return;
+    }
+
+    dailyList.innerHTML = Object.keys(dailySales)
+        .sort()
+        .reverse()
+        .map(day => `
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #e4d5bf;">
+                <span>${day}</span>
+                <strong>₱${dailySales[day].toFixed(2)}</strong>
+            </div>
+        `).join("");
+}
+
+updateSalesReport();
+</script>
+</body>
 </html>
