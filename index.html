@@ -822,6 +822,66 @@ header p {
         gap: 0;
     }
 }
+ /* SIDEBAR NAVIGATION */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: #30271f;
+    color: #fffdf8;
+    padding: 28px 16px;
+}
+
+.sidebar h2 {
+    font-family: Georgia, serif;
+    color: #e1c48f;
+    font-size: 21px;
+    text-align: center;
+    margin: 0 0 30px;
+}
+
+.sidebar button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #594838;
+    border-radius: 8px;
+    background: #44372d;
+    color: #fffdf8;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+    background: #87663e;
+}
+
+.app-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .sidebar button {
+        width: 100%;
+    }
+}
     </style>
 </head>
 
@@ -832,6 +892,15 @@ header p {
     <p>Restaurant Point of Sale System</p>
 </header>
 
+    <div class="app-layout">
+    <aside class="sidebar">
+        <h2>LA MAISON</h2>
+        <button class="active" onclick="showSection('home')">Dashboard</button>
+        <button onclick="showSection('menu-pos')">Menu &amp; POS</button>
+        <button onclick="showSection('salesReport')">Sales Report</button>
+        <button onclick="showSection('reservation')">Reservations</button>
+    </aside>
+    <div class="app-content">
 <nav class="main-nav">
     <a href="#home">Home</a>
     <a href="#reservation">Reservations</a>
@@ -988,7 +1057,7 @@ const menu = [
     {
         name: "Bruschetta",
         category: "appetizer",
-        price: 200,
+        price: 350,
         portion: "150 g",
         description: "Toasted bread topped with fresh tomatoes, garlic, basil, and olive oil."
     },
@@ -1016,14 +1085,14 @@ const menu = [
     {
         name: "Grilled Tuna Steak",
         category: "main",
-        price: 420,
+        price: 720,
         portion: "250 g",
         description: "Fresh tuna steak grilled to perfection and served with seasonal vegetables."
     },
     {
         name: "Fettuccine Alfredo",
         category: "main",
-        price: 280,
+        price: 380,
         portion: "300 g",
         description: "Fettuccine pasta tossed in a rich and creamy Parmesan Alfredo sauce."
     },
@@ -1375,9 +1444,11 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
     </div>
   </div>
 
-  <h3>Daily Sales</h3>
+ <h3>Daily Sales</h3>
   <div id="dailySalesList">Sales report will appear here.</div>
 </section>
+    </div>
+</div>
 </body>
 <!-- La Maison Restaurant Chat Assistant -->
 <style>
@@ -1444,6 +1515,7 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
     padding: 9px;
     cursor: pointer;
   }
+
 </style>
 
 <button id="chatButton" type="button">💬 Chat with us</button>
@@ -1510,7 +1582,24 @@ chatMessages.appendChild(reply);
   });
 </script>
 <script>
-function updateSalesReport() {
+function showSection(sectionId) {
+    const sections = ['home', 'menu-pos', 'salesReport', 'reservation'];
+
+    sections.forEach(function(id) {
+        const section = document.getElementById(id);
+        if (section) {
+            section.style.display = (id === sectionId) ? '' : 'none';
+        }
+    });
+
+    document.querySelectorAll('.sidebar button').forEach(function(button) {
+        button.classList.toggle(
+            'active',
+            button.getAttribute('onclick').includes("'" + sectionId + "'")
+        );
+    });
+}
+    function updateSalesReport() {
     const sales = JSON.parse(
         localStorage.getItem("laMaisonSales") || "[]"
     );
