@@ -1446,47 +1446,6 @@ function updateSalesReport() {
     const sales = JSON.parse(
         localStorage.getItem("laMaisonSales") || "[]"
     );
-const totalSales = sales.reduce(
-    (sum, sale) => sum + Number(sale.total || 0),
-    0
-);
-
-    document.getElementById("reportTotalSales").textContent =
-        "₱" + totalSales.toFixed(2);
-
-    document.getElementById("reportTotalOrders").textContent =
-        sales.length;
-document.getElementById("reportAverageOrder").textContent =
-    "₱" + (sales.length ? totalSales / sales.length : 0).toFixed(2);
-
-const dailySales = {};
-
-sales.forEach(sale => {
-    const day = sale.date ? sale.date.slice(0, 10) : "Unknown date";
-    dailySales[day] = (dailySales[day] || 0) + Number(sale.total || 0);
-});
-
-const dailyList = document.getElementById("dailySalesList");
-
-if (Object.keys(dailySales).length === 0) {
-    dailyList.textContent = "No completed sales recorded yet.";
-} else {
-    dailyList.innerHTML = Object.keys(dailySales)
-        .sort()
-        .reverse()
-        .map(day =>
-            `<p style="padding:10px 0;border-bottom:1px solid #e4d5bf;">
-                ${day}: <strong>₱${dailySales[day].toFixed(2)}</strong>
-            </p>`
-        ).join("");
-}
-
-updateSalesReport();
-<script>
-function updateSalesReport() {
-    const sales = JSON.parse(
-        localStorage.getItem("laMaisonSales") || "[]"
-    );
 
     const totalSales = sales.reduce(
         (sum, sale) => sum + Number(sale.total || 0),
@@ -1527,9 +1486,8 @@ function updateSalesReport() {
         .sort()
         .reverse()
         .map(day => `
-            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #e4d5bf;">
-                <span>${day}</span>
-                <strong>₱${dailySales[day].toFixed(2)}</strong>
+            <div style="padding:10px 0;border-bottom:1px solid #e4d5bf;">
+                ${day}: <strong>₱${dailySales[day].toFixed(2)}</strong>
             </div>
         `).join("");
 }
