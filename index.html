@@ -941,7 +941,35 @@ header p {
             <div class="total">
                 Total: ₱<span id="total">0</span>
             </div>
+<div style="margin-top:18px;padding:15px;background:#f5f0e8;border-radius:8px;">
+    <h3>Payment Method</h3>
 
+    <label>
+        <input type="radio" name="paymentMethod" value="Cash" checked>
+        Cash
+    </label>
+
+    <label style="margin-left:15px;">
+        <input type="radio" name="paymentMethod" value="GCash">
+        GCash
+    </label>
+
+    <div style="margin-top:12px;">
+        <label for="amountPaid">Amount Paid (₱)</label>
+        <input
+            type="number"
+            id="amountPaid"
+            min="0"
+            step="0.01"
+            placeholder="Enter amount paid"
+            style="width:100%;padding:10px;margin-top:5px;box-sizing:border-box;"
+        >
+    </div>
+
+    <p style="margin-bottom:0;">
+        Change: ₱<strong id="changeAmount">0.00</strong>
+    </p>
+</div>
             <button class="checkout" onclick="checkout()">
                 Checkout
             </button>
@@ -1163,10 +1191,16 @@ function removeItem(index) {
 }
 
 function clearOrder() {
-
     order = [];
 
     updateOrder();
+
+    document.getElementById("amountPaid").value = "";
+    document.getElementById("changeAmount").textContent = "0.00";
+
+    document.querySelector(
+        'input[name="paymentMethod"][value="Cash"]'
+    ).checked = true;
 }
 
 function checkout() {
@@ -1179,7 +1213,36 @@ function checkout() {
         (sum, item) => sum + (item.price * (item.quantity || 1)),
         0
     );
+const paymentMethod = document.querySelector(
+    'input[name="paymentMethod"]:checked'
+).value;
 
+const amountPaid = Number(
+    document.getElementById("amountPaid").value
+);
+if (
+    document.getElementById("amountPaid").value.trim() === "" ||
+    amountPaid <= 0
+) {
+    alert("Please enter a valid payment amount.");
+    return;
+}
+if (paymentMethod === "Cash" && amountPaid < total) {
+    alert("Insufficient payment. Please enter the correct amount.");
+    return;
+}
+
+if (paymentMethod === "GCash" && amountPaid < total) {
+    alert("Please confirm the full GCash payment amount.");
+    return;
+}
+
+const change = paymentMethod === "Cash"
+    ? amountPaid - total
+    : 0;
+
+document.getElementById("changeAmount").textContent =
+    change.toFixed(2);
     const orderNumber = "LM-" + Date.now().toString().slice(-6);
     const date = new Date().toLocaleString();
 const completedSale = {
@@ -1187,6 +1250,8 @@ const completedSale = {
     date: new Date().toISOString(),
     displayDate: date,
     total: total,
+      paymentMethod: paymentMethod,
+    amountPaid: amountPaid,
     items: order.map(item => ({
         name: item.name,
         price: item.price,
@@ -1207,10 +1272,13 @@ localStorage.setItem(
  updateSalesReport();
     
     let details = `
-        <p><strong>Order No.:</strong> ${orderNumber}</p>
-        <p><strong>Date:</strong> ${date}</p>
-        <hr>
-    `;
+    <p><strong>Order No.:</strong> ${orderNumber}</p>
+    <p><strong>Date:</strong> ${date}</p>
+    <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+    <p><strong>Amount Paid:</strong> ₱${amountPaid.toFixed(2)}</p>
+    <p><strong>Change:</strong> ₱${change.toFixed(2)}</p>
+    <hr>
+`;
 
     order.forEach(item => {
         const quantity = item.quantity || 1;
