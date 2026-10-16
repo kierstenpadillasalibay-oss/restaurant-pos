@@ -591,7 +591,59 @@ header p {
     padding: 8px 0;
     transition: color 0.2s;
 }
+/* DASHBOARD */
 
+.dashboard-section {
+    padding: 30px;
+    color: #30271f;
+}
+
+.dashboard-section h2 {
+    margin-top: 0;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin: 24px 0;
+}
+
+.dashboard-card {
+    background: #fffdf8;
+    border: 1px solid #e4d5bf;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(48, 39, 31, 0.06);
+}
+
+.dashboard-card h3 {
+    margin-top: 0;
+    font-size: 14px;
+    color: #75685d;
+}
+
+.dashboard-card p {
+    margin-bottom: 0;
+    font-size: 25px;
+    font-weight: bold;
+    color: #30271f;
+}
+
+#dashboardBestSellers,
+#dashboardTransactions {
+    background: #fffdf8;
+    border: 1px solid #e4d5bf;
+    border-radius: 12px;
+    padding: 18px;
+    margin: 12px 0 24px;
+}
+
+@media (max-width: 700px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+}
 .main-nav a:hover {
     color: #a17a43;
 }
@@ -908,10 +960,11 @@ background-repeat: no-repeat;
     <div class="app-layout">
     <aside class="sidebar">
         <h2>LA MAISON</h2>
-        <button class="active" onclick="showSection('home')">Dashboard</button>
+<button class="active" onclick="showSection('dashboard')">Dashboard</button>
         <button onclick="showSection('menu-pos')">Menu &amp; POS</button>
         <button onclick="showSection('salesReport')">Sales Report</button>
         <button onclick="showSection('reservation')">Reservations</button>
+        <button onclick="showSection('ownerLoginSection')">Owner Login</button>
     </aside>
     <div class="app-content">
 <nav class="main-nav">
@@ -919,6 +972,37 @@ background-repeat: no-repeat;
     <a href="#reservation">Reservations</a>
     <a href="#menu-pos">Menu / POS</a>
 </nav>
+        <section id="dashboard" class="dashboard-section">
+    <h2>Dashboard</h2>
+    <p>Welcome to La Maison Restaurant Management.</p>
+
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h3>Today's Sales</h3>
+            <p id="dashboardSales">₱0.00</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Total Orders</h3>
+            <p id="dashboardOrders">0</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Average Order Value</h3>
+            <p id="dashboardAverage">₱0.00</p>
+        </div>
+    </div>
+
+    <h3>Best-selling Menu Items</h3>
+    <div id="dashboardBestSellers">
+        No sales recorded yet.
+    </div>
+
+    <h3>Recent Transactions</h3>
+    <div id="dashboardTransactions">
+        No transactions recorded yet.
+    </div>
+</section>
 <section class="home-section" id="home">
     <p class="home-label">WELCOME TO LA MAISON</p>
     <h2>A Taste of Elegance</h2>
@@ -1587,7 +1671,6 @@ window.saveSaleToFirebase = async function (sale) {
 </section>
     </div>
 </div>
-</body>
 <!-- La Maison Restaurant Chat Assistant -->
 <style>
   #chatButton {
@@ -1721,11 +1804,10 @@ chatMessages.appendChild(reply);
 </script>
 <script>
 function showSection(sectionId) {
-    const sections = ['home', 'menu-pos', 'salesReport', 'reservation'];
-
+const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'ownerLoginSection'];
     sections.forEach(function(id) {
-        const section = document.getElementById(id);
-        if (section) {
+     const section = document.getElementById(id);
+    if (section) {
             section.style.display = (id === sectionId) ? '' : 'none';
         }
     });
@@ -1737,7 +1819,10 @@ function showSection(sectionId) {
         );
     });
 }
-    function updateSalesReport() {
+  
+showSection('dashboard');
+    
+function updateSalesReport() {
     const sales = JSON.parse(
         localStorage.getItem("laMaisonSales") || "[]"
     );
