@@ -1491,7 +1491,21 @@ window.ownerLogout = async function () {
 
   try {
     await window.ownerLogin(email, password);
-    message.textContent = "Login successful!";
+const user = window.firebaseAuth.currentUser;
+
+if (user && !user.emailVerified) {
+  message.textContent = "Login successful, but email is not verified. Sending verification email...";
+
+  try {
+    const result = await window.sendOwnerVerification();
+    message.textContent = result;
+  } catch (error) {
+    console.error("Verification email failed:", error);
+    message.textContent = "Login successful, but verification email could not be sent. Please try again later.";
+  }
+} else {
+  message.textContent = "Login successful! Email verified.";
+}
   } catch (error) {
     console.error("Owner login failed:", error);
     message.textContent = "Login failed. Check your email and password.";
