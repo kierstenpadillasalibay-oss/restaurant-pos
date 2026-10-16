@@ -1373,20 +1373,46 @@ localStorage.setItem(
 
 
 displayMenu();
-document.getElementById("reservationForm").addEventListener("submit", function(event) {
+const reservationForm = document.getElementById("reservationForm");
+
+reservationForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
     const date = document.getElementById("reservationDate").value;
     const time = document.getElementById("reservationTime").value;
-    const guests = document.getElementById("guestCount").value;
+    const guests = Number(document.getElementById("guestCount").value);
+    const message = document.getElementById("reservationMessage");
 
-    document.getElementById("reservationMessage").textContent =
-        "Thank you, " + name + "! Your reservation request for " +
-        guests + " guest(s) on " + date + " at " + time +
-        " has been received. Please contact the restaurant to confirm.";
+    if (!name || !phone || !date || !time || !guests) {
+        message.textContent = "Please complete all reservation fields.";
+        return;
+    }
 
-    this.reset();
+    message.textContent = "Submitting your reservation request...";
+
+    try {
+        await addDoc(collection(db, "reservations"), {
+            name: name,
+            phone: phone,
+            date: date,
+            time: time,
+            guests: guests,
+            status: "Pending",
+            createdAt: serverTimestamp()
+        });
+
+        message.textContent =
+            "Thank you, " + name +
+            "! Your reservation request has been submitted. The restaurant must confirm it.";
+
+        this.reset();
+    } catch (error) {
+        console.error("Reservation submission failed:", error);
+        message.textContent =
+            "We couldn't submit your request yet. Please try again later.";
+    }
 });
 </script>
 <div id="receiptModal" style="display:none;">
@@ -1405,8 +1431,8 @@ document.getElementById("reservationForm").addEventListener("submit", function(e
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
   import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    
   const firebaseConfig = {
     apiKey: "AIzaSyC1WWHN98XmVPbI0Xml9gOAvnVNQgkmzlA",
     authDomain: "la-maison-restaurant-99de2.firebaseapp.com",
