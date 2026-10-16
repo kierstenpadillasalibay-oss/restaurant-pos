@@ -17,6 +17,14 @@ h1{font-family:Georgia,serif;font-weight:normal;font-size:32px;margin-bottom:8px
 .notice{background:#fff9e9;border:1px solid #e4d1a8;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.6;margin:22px 0}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:25px 0}
 .card{background:#fffdf8;border:1px solid #e5d8c5;border-radius:13px;padding:22px}
+  .card{
+  box-shadow:0 5px 18px rgba(48,39,31,0.06);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 24px rgba(48,39,31,0.12);
+}
 .card span{color:#987443;font-size:12px;text-transform:uppercase;letter-spacing:1px}
 .card h2{font-family:Georgia,serif;font-size:27px;font-weight:normal;margin:12px 0 5px}
 .panel{background:#fffdf8;border:1px solid #e5d8c5;border-radius:13px;padding:24px;margin-top:20px}
@@ -26,6 +34,13 @@ h1{font-family:Georgia,serif;font-weight:normal;font-size:32px;margin-bottom:8px
 .btn.light{background:#fffdf8;color:#30271f;border-color:#d8c5aa}
 footer{text-align:center;padding:25px;color:#938779;font-size:12px}
 @media(max-width:700px){header{padding:20px;align-items:flex-start}.brand{font-size:21px}.grid{grid-template-columns:1fr}h1{font-size:28px}}
+  @media(max-width:700px){
+  .container{padding:22px 16px}
+  .card{padding:18px}
+  .panel{padding:18px}
+  .links{flex-direction:column}
+  .btn{text-align:center}
+}
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
