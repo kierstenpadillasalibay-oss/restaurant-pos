@@ -1333,7 +1333,9 @@ const savedSales = JSON.parse(
 );
 
 savedSales.push(completedSale);
-
+if (window.saveSaleToFirebase) {
+    window.saveSaleToFirebase(completedSale);
+}
 localStorage.setItem(
     "laMaisonSales",
     JSON.stringify(savedSales)
@@ -1447,12 +1449,95 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
   const db = getFirestore(app);
 
   window.firebaseAuth = auth;
-  window.firebaseDb = db;
+    window.ownerLogin = async function (email, password) {
+  const { signInWithEmailAndPassword } =
+    await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
 
+  return await signInWithEmailAndPassword(auth, email, password);
+};
+
+window.ownerLogout = async function () {
+  const { signOut } =
+    await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+
+  return await signOut(auth);
+};
+    window.sendOwnerVerification = async function () {
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error("Please log in first.");
+  }
+
+  if (user.emailVerified) {
+    return "Your email is already verified.";
+  }
+
+  const { sendEmailVerification } =
+    await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+
+  await sendEmailVerification(user);
+
+  return "Verification email sent. Please check your inbox and spam folder.";
+};
+    document.getElementById("ownerLoginForm").addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const email = document.getElementById("ownerEmail").value.trim();
+  const password = document.getElementById("ownerPassword").value;
+  const message = document.getElementById("ownerLoginMessage");
+
+  message.textContent = "Logging in...";
+
+  try {
+    await window.ownerLogin(email, password);
+    message.textContent = "Login successful!";
+  } catch (error) {
+    console.error("Owner login failed:", error);
+    message.textContent = "Login failed. Check your email and password.";
+  }
+});
+  window.firebaseDb = db;
+window.saveSaleToFirebase = async function (sale) {
+  try {
+    const { collection, addDoc, serverTimestamp } =
+      await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+
+    await addDoc(collection(db, "sales"), {
+      ...sale,
+      savedAt: serverTimestamp()
+    });
+
+    console.log("Sale saved to Firebase!");
+    return true;
+  } catch (error) {
+    console.error("Firebase sales save failed:", error);
+    return false;
+  }
+};
   console.log("La Maison Restaurant Firebase initialized!");
     </script>
+        <section id="ownerLoginSection" style="margin:30px;padding:20px;background:#fffdf8;border:1px solid #e4d5bf;border-radius:12px;color:#30271f;">
+  <h2 style="font-family:Georgia,serif;">Owner Login</h2>
+  <form id="ownerLoginForm">
+    <label for="ownerEmail">Email</label>
+    <input id="ownerEmail" type="email" required
+      placeholder="Owner email"
+      style="display:block;width:100%;padding:10px;margin:8px 0 15px;box-sizing:border-box;">
+
+    <label for="ownerPassword">Password</label>
+    <input id="ownerPassword" type="password" required
+      placeholder="Password"
+      style="display:block;width:100%;padding:10px;margin:8px 0 15px;box-sizing:border-box;">
+
+    <button type="submit" style="padding:10px 18px;background:#30271f;color:white;border:0;border-radius:6px;">
+      Log In
+    </button>
+    <p id="ownerLoginMessage" role="status"></p>
+  </form>
+</section>
 <section id="salesReport" style="margin:30px;padding:24px;background:#fffdf8;border:1px solid #e4d5bf;border-top:4px solid #c5a46d;border-radius:12px;color:#30271f;">
-  <h2 style="font-family:Georgia,serif;">La Maison — Sales Report</h2>
+    <h2 style="font-family:Georgia,serif;">La Maison — Sales Report</h2>
   <p>Completed sales recorded on this browser</p>
 
   <div style="display:flex;flex-wrap:wrap;gap:15px;">
