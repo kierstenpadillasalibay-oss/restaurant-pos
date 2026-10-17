@@ -1817,21 +1817,51 @@ const reply = document.createElement("p");
 const q = question.toLowerCase();
 
 let answer = "";
-
 if (q.includes("recommend") || q.includes("best food")) {
-  answer = "We offer delicious Western dishes, including Grilled Salmon, Grilled Tuna Steak, Fettuccine Alfredo, and Grilled Ribeye Steak. Which type of food do you prefer?";
+  answer = "I'd be happy to recommend a dish! For seafood, try our Grilled Salmon with Lemon Butter Sauce (₱480) or Grilled Tuna Steak (₱420). If you prefer pasta, our Fettuccine Alfredo is ₱280. Would you prefer seafood or pasta?";
 } else if (q.includes("salmon")) {
-  answer = "Our Grilled Salmon with Lemon Butter Sauce is a delicious seafood option.";
-} else if (q.includes("seafood") || q.includes("fish")) {
-  answer = "You might enjoy Grilled Salmon with Lemon Butter Sauce or Grilled Tuna Steak.";
+  if (q.includes("salmon salad")) {
+    answer = "Our Salmon Salad costs ₱320.";
+  } else if (q.includes("honey glazed salmon")) {
+    answer = "Our Honey Glazed Salmon costs ₱460.";
+  } else if (q.includes("creamy tuscan salmon")) {
+    answer = "Our Creamy Tuscan Salmon costs ₱480.";
+  } else if (q.includes("price") || q.includes("how much") || q.includes("cost")) {
+    answer = "Our Grilled Salmon with Lemon Butter Sauce costs ₱480.";
+  } else {
+    answer = "Our Grilled Salmon with Lemon Butter Sauce is a delicious seafood option. It costs ₱480. Would you like to know more about it?";
+  }
 } else if (q.includes("menu") || q.includes("food")) {
-  answer = "Our menu features appetizers, soups, salads, seafood, pasta, steak, desserts, and beverages. What would you like to explore?";
-} else if (q.includes("hello") || q.includes("hi")) {
-  answer = "Hello! Welcome to La Maison Restaurant. How can I help you today?";
-} else if (q.includes("price") || q.includes("how much")) {
-  answer = "I'd be happy to help with prices. Please check our restaurant menu for the latest prices.";
-} else if (q.includes("reservation") || q.includes("book a table")) {
-  answer = "You can use the reservation form on our website to submit a booking request.";
+  answer = "Welcome to La Maison! Our menu includes Bruschetta (₱180), Caesar Salad (₱220), Greek Salad (₱230), Fettuccine Alfredo (₱280), Grilled Tuna Steak (₱420), Grilled Salmon with Lemon Butter Sauce (₱480), Crème Brûlée (₱180), and Iced Lemon Tea (₱100). Which dish or category would you like to know more about?";
+} else if (/^(hi|hello|hey)\b/.test(q)) {
+    answer = "Hello! Welcome to La Maison Restaurant. How can I help you today?";
+} else if (q.includes("price") || q.includes("how much") || q.includes("cost")) {
+  if (q.includes("bruschetta")) {
+    answer = "Our Bruschetta costs ₱180.";
+  } else if (q.includes("caesar salad")) {
+    answer = "Our Caesar Salad costs ₱220.";
+  } else if (q.includes("greek salad")) {
+    answer = "Our Greek Salad costs ₱230.";
+  } else if (q.includes("fettuccine alfredo")) {
+    answer = "Our Fettuccine Alfredo costs ₱280.";
+  } else if (q.includes("grilled tuna") || q.includes("tuna steak")) {
+    answer = "Our Grilled Tuna Steak costs ₱420.";
+  } else if (q.includes("grilled salmon") || q.includes("lemon butter salmon")) {
+    answer = "Our Grilled Salmon with Lemon Butter Sauce costs ₱480.";
+  } else if (q.includes("creme brulee") || q.includes("crème brûlée")) {
+    answer = "Our Crème Brûlée costs ₱180.";
+  } else if (q.includes("lemon tea")) {
+    answer = "Our Iced Lemon Tea costs ₱100.";
+  } else {
+    answer = "Which dish would you like to know the price of? You can ask about Bruschetta, Caesar Salad, Greek Salad, Fettuccine Alfredo, Grilled Tuna Steak, Grilled Salmon, Crème Brûlée, or Iced Lemon Tea.";
+  }
+} else if (
+  q.includes("reservation") ||
+  q.includes("book a table") ||
+  q.includes("reserve") ||
+  q.includes("available table")
+) {
+  answer = "I'd be happy to help with your reservation! Please open the Reservation section on our website and fill out the booking form. Make sure your preferred date, time, and number of guests are correct before submitting.";
 } else {
   answer = "I can help with menu questions, food recommendations, seafood, and reservations. What would you like to know?";
 }
