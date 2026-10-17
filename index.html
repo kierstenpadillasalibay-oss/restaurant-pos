@@ -966,6 +966,9 @@ background-repeat: no-repeat;
         <button onclick="showSection('reservation')">Reservations</button>
         <button onclick="showSection('feedback')">Customer Feedback</button>
         <button onclick="showSection('ownerLoginSection')">Owner Login</button>
+<button onclick="showSection('ownerFeedbackDashboard'); loadOwnerFeedback();">
+    Customer Feedback
+</button>
     </aside>
     <div class="app-content">
 <nav class="main-nav">
@@ -1003,6 +1006,43 @@ background-repeat: no-repeat;
     <div id="dashboardTransactions">
         No transactions recorded yet.
     </div>
+</section>
+        <section id="ownerFeedbackDashboard" class="dashboard-section" style="display: none;">
+    <h2>Customer Feedback</h2>
+    <p>Review customer ratings and comments from La Maison Restaurant.</p>
+
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h3>Total Feedback</h3>
+            <p id="feedbackTotal">0</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Average Rating</h3>
+            <p id="feedbackAverage">0.0 / 5</p>
+        </div>
+    </div>
+<div class="feedback-filters">
+    <button type="button" onclick="filterOwnerFeedback('all')">
+        All Reviews
+    </button>
+    <button type="button" onclick="filterOwnerFeedback('good')">
+        Good Reviews
+    </button>
+    <button type="button" onclick="filterOwnerFeedback('neutral')">
+        Neutral Reviews
+    </button>
+    <button type="button" onclick="filterOwnerFeedback('bad')">
+        Bad Reviews
+    </button>
+</div>
+    <div id="ownerFeedbackList">
+        <p>No customer feedback loaded yet.</p>
+    </div>
+
+    <button type="button" onclick="loadOwnerFeedback()">
+        Refresh Feedback
+    </button>
 </section>
 <section class="home-section" id="home">
     <p class="home-label">WELCOME TO LA MAISON</p>
@@ -1605,8 +1645,7 @@ reservationForm.addEventListener("submit", async function(event) {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
   import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-    
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";    
   const firebaseConfig = {
     apiKey: "AIzaSyC1WWHN98XmVPbI0Xml9gOAvnVNQgkmzlA",
     authDomain: "la-maison-restaurant-99de2.firebaseapp.com",
@@ -1684,6 +1723,14 @@ if (user && !user.emailVerified) {
   }
 });
   window.firebaseDb = db;
+    window.saveCustomerFeedback = async function (feedback) {
+    await addDoc(collection(db, "feedback"), {
+        name: feedback.name || "Anonymous",
+        rating: Number(feedback.rating),
+        comment: feedback.comment,
+        createdAt: serverTimestamp()
+    });
+};
 window.saveSaleToFirebase = async function (sale) {
   try {
     const { collection, addDoc, serverTimestamp } =
@@ -1700,6 +1747,101 @@ window.saveSaleToFirebase = async function (sale) {
     console.error("Firebase sales save failed:", error);
     return false;
   }
+};
+    let currentFeedbackFilter = "all";
+    
+window.loadOwnerFeedback = async function () {
+    const user = auth.currentUser;
+    const feedbackList = document.getElementById("ownerFeedbackList");
+    const totalDisplay = document.getElementById("feedbackTotal");
+    const averageDisplay = document.getElementById("feedbackAverage");
+
+    if (!user || user.email !== "kierstenpadillasalibay@gmail.com" ||
+        !user.emailVerified) {
+        feedbackList.textContent =
+            "Please log in using the verified owner account to view feedback.";
+        return;
+    }
+
+    feedbackList.textContent = "Loading customer feedback...";
+
+    try {
+        const feedbackQuery = query(
+            collection(db, "feedback"),
+            orderBy("createdAt", "desc")
+        );
+
+        const snapshot = await getDocs(feedbackQuery);
+        feedbackList.replaceChildren();
+
+        let totalRating = 0;
+        totalDisplay.textContent = snapshot.size;
+
+        if (snapshot.empty) {
+            feedbackList.textContent = "No customer feedback yet.";
+            averageDisplay.textContent = "0.0 / 5";
+            return;
+        }
+
+        snapshot.forEach((feedbackDoc) => {
+            const item = feedbackDoc.data();
+            totalRating += item.rating;
+
+            const card = document.createElement("div");
+            card.className = "dashboard-card";
+
+            const customer = document.createElement("h3");
+            customer.textContent = item.name || "Anonymous";
+
+            const rating = document.createElement("p");
+            rating.textContent = "Rating: " + item.rating + " / 5";
+
+            const comment = document.createElement("p");
+            comment.textContent = item.comment || "";
+
+            const date = document.createElement("p");
+            date.textContent = item.createdAt
+                ? item.createdAt.toDate().toLocaleString()
+                : "Date unavailable";
+
+            card.append(customer, rating, comment, date);
+            feedbackList.appendChild(card);
+        });
+window.filterOwnerFeedback(currentFeedbackFilter);
+        
+        averageDisplay.textContent =
+            (totalRating / snapshot.size).toFixed(1) + " / 5";
+
+    } catch (error) {
+        console.error("Feedback loading failed:", error);
+        feedbackList.textContent =
+            "Unable to load feedback. Please check your login and Firebase rules.";
+    }
+};
+window.filterOwnerFeedback = function (filter) {
+    currentFeedbackFilter = filter;
+    
+    const cards = document.querySelectorAll(
+        "#ownerFeedbackList .dashboard-card"
+    );
+
+    cards.forEach((card) => {
+        const ratingText = card.querySelector("p:nth-of-type(1)")?.textContent || "";
+        const match = ratingText.match(/Rating:\s*(\d+)/);
+        const rating = match ? Number(match[1]) : 0;
+
+        let show = true;
+
+        if (filter === "good") {
+            show = rating >= 4 && rating <= 5;
+        } else if (filter === "neutral") {
+            show = rating === 3;
+        } else if (filter === "bad") {
+            show = rating >= 1 && rating <= 2;
+        }
+
+        card.style.display = show ? "" : "none";
+    });
 };
   console.log("La Maison Restaurant Firebase initialized!");
     </script>
@@ -2015,7 +2157,8 @@ chatMessages.appendChild(reply);
 </script>
 <script>
 function showSection(sectionId) {
-const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'feedback', 'ownerLoginSection'];    sections.forEach(function(id) {
+const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'feedback', 'ownerLoginSection', 'ownerFeedbackDashboard'];
+   sections.forEach(function(id) {
      const section = document.getElementById(id);
     if (section) {
             section.style.display = (id === sectionId) ? '' : 'none';
@@ -2085,7 +2228,7 @@ updateSalesReport();
     const feedbackForm = document.getElementById("feedbackForm");
 
 if (feedbackForm) {
-    feedbackForm.addEventListener("submit", function(event) {
+    feedbackForm.addEventListener("submit", async function(event) {
         event.preventDefault();
 
         const name = document.getElementById("feedbackName").value.trim();
@@ -2098,24 +2241,18 @@ if (feedbackForm) {
             return;
         }
 
-        const feedback = {
-            name: name || "Anonymous",
-            rating: Number(rating),
-            comment: comment,
-            date: new Date().toISOString()
-        };
+        message.textContent = "Submitting your feedback...";
 
         try {
-            const savedFeedback = JSON.parse(
-                localStorage.getItem("laMaisonFeedback") || "[]"
-            );
+            if (!window.saveCustomerFeedback) {
+    throw new Error("Firebase feedback function is not available.");
+}
 
-            savedFeedback.push(feedback);
-
-            localStorage.setItem(
-                "laMaisonFeedback",
-                JSON.stringify(savedFeedback)
-            );
+await window.saveCustomerFeedback({
+    name: name || "Anonymous",
+    rating: Number(rating),
+    comment: comment
+});
 
             message.textContent =
                 "Thank you for sharing your feedback with La Maison!";
