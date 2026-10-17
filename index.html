@@ -1107,6 +1107,21 @@ background-repeat: no-repeat;
             <div class="total">
                 Total: ₱<span id="total">0</span>
             </div>
+            <div style="margin-top:15px;padding:15px;background:#f5f0e8;border-radius:8px;">
+            <h3>Discount</h3>
+
+    <label for="discountPercent">Discount Percentage (%)</label>
+<select id="discountPercent" style="width:100%;padding:10px;margin-top:5px;" onchange="updateOrder()">
+    <option value="0">No Discount</option>
+        <option value="5">5% Discount</option>
+        <option value="10">10% Discount</option>
+        <option value="15">15% Discount</option>
+    </select>
+
+    <p style="margin-bottom:0;">
+        Discount Amount: ₱<span id="discountAmount">0.00</span>
+    </p>
+</div>
 <div style="margin-top:18px;padding:15px;background:#f5f0e8;border-radius:8px;">
     <h3>Payment Method</h3>
 
@@ -1337,29 +1352,41 @@ function updateOrder() {
         });
     }
 
-    const total = order.reduce(
-        (sum, item) => sum + (item.price * (item.quantity || 1)),
-        0
-    );
+const subtotal = order.reduce(
+    (sum, item) => sum + (item.price * (item.quantity || 1)),
+    0
+);
 
-    document.getElementById("itemCount").innerText =
-        order.reduce((sum, item) => sum + (item.quantity || 1), 0);
+const discountPercent = Number(
+    document.getElementById("discountPercent").value || 0
+);
 
-    document.getElementById("subtotal").innerText = total.toFixed(2);
-    document.getElementById("total").innerText = total.toFixed(2);
+const discountAmount = subtotal * (discountPercent / 100);
+const finalTotal = subtotal - discountAmount;    
+document.getElementById("itemCount").innerText =
+    order.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+document.getElementById("subtotal").innerText =
+    subtotal.toFixed(2);
+
+document.getElementById("discountAmount").innerText =
+    discountAmount.toFixed(2);
+
+document.getElementById("total").innerText =
+    finalTotal.toFixed(2);
 }
-
+    
 function removeItem(index) {
-
     order.splice(index, 1);
-
     updateOrder();
 }
 
 function clearOrder() {
-    order = [];
+order = [];
 
-    updateOrder();
+document.getElementById("discountPercent").value = "0";
+
+updateOrder();
 
     document.getElementById("amountPaid").value = "";
     document.getElementById("changeAmount").textContent = "0.00";
@@ -1375,11 +1402,18 @@ function checkout() {
         return;
     }
 
-    const total = order.reduce(
-        (sum, item) => sum + (item.price * (item.quantity || 1)),
-        0
-    );
-const paymentMethod = document.querySelector(
+const subtotal = order.reduce(
+    (sum, item) => sum + (item.price * (item.quantity || 1)),
+    0
+);
+
+const discountPercent = Number(
+    document.getElementById("discountPercent").value || 0
+);
+
+const discountAmount = subtotal * (discountPercent / 100);
+const total = subtotal - discountAmount;
+    const paymentMethod = document.querySelector(
     'input[name="paymentMethod"]:checked'
 ).value;
 
@@ -1411,12 +1445,16 @@ document.getElementById("changeAmount").textContent =
     change.toFixed(2);
     const orderNumber = "LM-" + Date.now().toString().slice(-6);
     const date = new Date().toLocaleString();
+
 const completedSale = {
     orderNumber: orderNumber,
     date: new Date().toISOString(),
     displayDate: date,
-    total: total,
-      paymentMethod: paymentMethod,
+    subtotal: subtotal,
+    discountPercent: discountPercent,
+    discountAmount: discountAmount,
+    total: total,      
+    paymentMethod: paymentMethod,
     amountPaid: amountPaid,
     items: order.map(item => ({
         name: item.name,
@@ -1443,6 +1481,8 @@ localStorage.setItem(
     <p><strong>Order No.:</strong> ${orderNumber}</p>
     <p><strong>Date:</strong> ${date}</p>
     <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+    <p><strong>Subtotal:</strong> ₱${subtotal.toFixed(2)}</p>
+    <p><strong>Discount (${discountPercent}%):</strong> -₱${discountAmount.toFixed(2)}</p>
     <p><strong>Amount Paid:</strong> ₱${amountPaid.toFixed(2)}</p>
     <p><strong>Change:</strong> ₱${change.toFixed(2)}</p>
     <hr>
