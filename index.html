@@ -964,6 +964,7 @@ background-repeat: no-repeat;
         <button onclick="showSection('menu-pos')">Menu &amp; POS</button>
         <button onclick="showSection('salesReport')">Sales Report</button>
         <button onclick="showSection('reservation')">Reservations</button>
+        <button onclick="showSection('feedback')">Customer Feedback</button>
         <button onclick="showSection('ownerLoginSection')">Owner Login</button>
     </aside>
     <div class="app-content">
@@ -1056,6 +1057,40 @@ background-repeat: no-repeat;
             </button>
 
             <p id="reservationMessage" role="status"></p>
+        </form>
+    </div>
+</section>
+        <!-- LA MAISON CUSTOMER FEEDBACK -->
+<section id="feedback" class="feedback-section">
+    <div class="feedback-card">
+        <p class="feedback-label">YOUR EXPERIENCE MATTERS</p>
+        <h2>Share Your Feedback</h2>
+        <p>We would love to hear about your dining experience at La Maison.</p>
+
+        <form id="feedbackForm">
+            <label for="feedbackName">Name (Optional)</label>
+            <input type="text" id="feedbackName" placeholder="Enter your name">
+
+            <label for="feedbackRating">Your Rating</label>
+            <select id="feedbackRating" required>
+                <option value="">Choose a rating</option>
+                <option value="5">★★★★★ — Excellent</option>
+                <option value="4">★★★★ — Very Good</option>
+                <option value="3">★★★ — Good</option>
+                <option value="2">★★ — Fair</option>
+                <option value="1">★ — Needs Improvement</option>
+            </select>
+
+            <label for="feedbackComment">Your Comments</label>
+            <textarea id="feedbackComment" rows="5"
+                placeholder="Tell us about your experience..."
+                required></textarea>
+
+            <button type="submit" class="feedback-submit">
+                Submit Feedback
+            </button>
+
+            <p id="feedbackMessage" role="status"></p>
         </form>
     </div>
 </section>
@@ -1777,6 +1812,112 @@ window.saveSaleToFirebase = async function (sale) {
     cursor: pointer;
   }
 
+/* LA MAISON CUSTOMER FEEDBACK DESIGN */
+.feedback-section {
+    padding: 70px 24px;
+    background: linear-gradient(180deg, #f8f4ed, #eee5d8);
+}
+
+.feedback-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 42px;
+    background: #fffdf8;
+    border: 1px solid #e5d6c0;
+    border-top: 4px solid #c5a46d;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(48, 39, 31, 0.10);
+}
+
+.feedback-label {
+    color: #987443;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.feedback-card h2 {
+    font-family: Georgia, serif;
+    font-size: 34px;
+    font-weight: normal;
+    text-align: center;
+    color: #30271f;
+    margin: 0 0 12px;
+}
+
+.feedback-card > p:not(.feedback-label) {
+    text-align: center;
+    color: #766c61;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+#feedbackForm label {
+    display: block;
+    margin: 18px 0 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #403328;
+}
+
+#feedbackForm input,
+#feedbackForm select,
+#feedbackForm textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dfd2c0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #30271f;
+    font: inherit;
+}
+
+#feedbackForm textarea {
+    resize: vertical;
+}
+
+.feedback-submit {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 24px;
+    padding: 14px 20px;
+    border: 1px solid #30271f;
+    border-radius: 8px;
+    background: #30271f;
+    color: #fffdf8;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.feedback-submit:hover {
+    background: #87663e;
+    border-color: #87663e;
+}
+
+#feedbackMessage {
+    color: #426b45;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+    .feedback-section {
+        padding: 40px 16px;
+    }
+
+    .feedback-card {
+        padding: 26px 20px;
+    }
+
+    .feedback-card h2 {
+        font-size: 28px;
+    }
+}
 </style>
 
 <button id="chatButton" type="button">💬 Chat with us</button>
@@ -1874,8 +2015,7 @@ chatMessages.appendChild(reply);
 </script>
 <script>
 function showSection(sectionId) {
-const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'ownerLoginSection'];
-    sections.forEach(function(id) {
+const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'feedback', 'ownerLoginSection'];    sections.forEach(function(id) {
      const section = document.getElementById(id);
     if (section) {
             section.style.display = (id === sectionId) ? '' : 'none';
@@ -1941,8 +2081,53 @@ function updateSalesReport() {
             </div>
         `).join("");
 }
-
 updateSalesReport();
+    const feedbackForm = document.getElementById("feedbackForm");
+
+if (feedbackForm) {
+    feedbackForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("feedbackName").value.trim();
+        const rating = document.getElementById("feedbackRating").value;
+        const comment = document.getElementById("feedbackComment").value.trim();
+        const message = document.getElementById("feedbackMessage");
+
+        if (!rating || !comment) {
+            message.textContent = "Please provide a rating and your comments.";
+            return;
+        }
+
+        const feedback = {
+            name: name || "Anonymous",
+            rating: Number(rating),
+            comment: comment,
+            date: new Date().toISOString()
+        };
+
+        try {
+            const savedFeedback = JSON.parse(
+                localStorage.getItem("laMaisonFeedback") || "[]"
+            );
+
+            savedFeedback.push(feedback);
+
+            localStorage.setItem(
+                "laMaisonFeedback",
+                JSON.stringify(savedFeedback)
+            );
+
+            message.textContent =
+                "Thank you for sharing your feedback with La Maison!";
+
+            feedbackForm.reset();
+        } catch (error) {
+            console.error("Feedback save failed:", error);
+            message.textContent =
+                "We couldn't save your feedback. Please try again.";
+        }
+    });
+}
 </script>
 </body>
 </html>
