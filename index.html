@@ -184,7 +184,11 @@
             font-size: 16px;
             cursor: pointer;
         }
-
+/* Hide owner-only controls by default */
+#ownerSidebar,
+#ownerOrderPanel {
+    display: none;
+}
         .clear {
             width: 100%;
             padding: 10px;
@@ -366,7 +370,11 @@ header p {
     grid-template-columns: 190px minmax(0, 1fr) 340px;
     gap: 0;
 }
-
+        
+/* Public menu layout when POS order panel is hidden */
+.layout.public-view {
+    grid-template-columns: 190px minmax(0, 1fr);
+}
 .categories {
     background: #30271f;
     padding: 24px 14px;
@@ -958,8 +966,8 @@ background-repeat: no-repeat;
 </header>
 
     <div class="app-layout">
-    <aside class="sidebar">
-        <h2>LA MAISON</h2>
+<aside class="sidebar" id="ownerSidebar">
+    <h2>LA MAISON</h2>
 <button class="active" onclick="showSection('dashboard')">Dashboard</button>
         <button onclick="showSection('menu-pos')">Menu &amp; POS</button>
         <button onclick="showSection('salesReport')">Sales Report</button>
@@ -975,6 +983,7 @@ background-repeat: no-repeat;
     <a href="#home">Home</a>
     <a href="#reservation">Reservations</a>
     <a href="#menu-pos">Menu / POS</a>
+<a href="#" onclick="showSection('ownerLoginSection'); return false;">Owner Login</a>
 </nav>
         <section id="dashboard" class="dashboard-section">
     <h2>Dashboard</h2>
@@ -1161,8 +1170,8 @@ background-repeat: no-repeat;
         <div class="menu-grid" id="menuGrid"></div>
     </main>
 
-    <aside class="order">
-        <h2>Current Order</h2>
+<aside class="order" id="ownerOrderPanel">
+    <h2>Current Order</h2>
 
         <div id="orderList">
             No items added yet.
@@ -1337,39 +1346,36 @@ const menu = [
 let order = [];
 
 function displayMenu(category = "all") {
-
     const menuGrid = document.getElementById("menuGrid");
+    if (!menuGrid) return;
 
     menuGrid.innerHTML = "";
+
+    const user = window.firebaseAuth?.currentUser;
+    const isVerifiedOwner =
+        user &&
+        user.email === "kierstenpadillasalibay@gmail.com" &&
+        user.emailVerified === true;
 
     const filteredMenu = category === "all"
         ? menu
         : menu.filter(item => item.category === category);
 
     filteredMenu.forEach(item => {
+        const addButton = isVerifiedOwner
+            ? `<button class="add-btn"
+                onclick="addItem('${item.name}', ${item.price})">
+                Add to Order
+               </button>`
+            : "";
 
         menuGrid.innerHTML += `
             <div class="menu-card">
-
                 <h3>${item.name}</h3>
-
-                <div class="description">
-                    ${item.description}
-                </div>
-
-                <div class="portion">
-                    Portion: ${item.portion}
-                </div>
-
-                <div class="price">
-                    ₱${item.price}
-                </div>
-
-                <button class="add-btn"
-                    onclick="addItem('${item.name}', ${item.price})">
-                    Add to Order
-                </button>
-
+                <div class="description">${item.description}</div>
+                <div class="portion">Portion: ${item.portion}</div>
+                <div class="price">₱${item.price}</div>
+                ${addButton}
             </div>
         `;
     });
@@ -1671,7 +1677,13 @@ window.ownerLogout = async function () {
   const { signOut } =
     await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
 
-  return await signOut(auth);
+  await signOut(auth);
+
+  document.getElementById("ownerSidebar").style.display = "none";
+  document.getElementById("ownerOrderPanel").style.display = "none";
+
+  showSection("home");
+  displayMenu();
 };
     window.sendOwnerVerification = async function () {
   const user = auth.currentUser;
@@ -1715,8 +1727,13 @@ if (user && !user.emailVerified) {
     message.textContent = "Login successful, but verification email could not be sent. Please try again later.";
   }
 } else {
-  message.textContent = "Login successful! Email verified.";
+message.textContent = "Login successful! Email verified.";
+showSection("dashboard");
+displayMenu();
+document.getElementById("ownerSidebar").style.display = "block";
+document.getElementById("ownerOrderPanel").style.display = "block";
 }
+      
   } catch (error) {
     console.error("Owner login failed:", error);
     message.textContent = "Login failed. Check your email and password.";
@@ -2157,23 +2174,96 @@ chatMessages.appendChild(reply);
 </script>
 <script>
 function showSection(sectionId) {
-const sections = ['dashboard', 'home', 'menu-pos', 'salesReport', 'reservation', 'feedback', 'ownerLoginSection', 'ownerFeedbackDashboard'];
-   sections.forEach(function(id) {
-     const section = document.getElementById(id);
-    if (section) {
-            section.style.display = (id === sectionId) ? '' : 'none';
+    const sections = [
+        'dashboard',
+        'home',
+        'menu-pos',
+        'salesReport',
+        'reservation',
+        'feedback',
+        'ownerLoginSection',
+        'ownerFeedbackDashboard'
+    ];
+
+    const publicSections = [
+        'home',
+        'menu-pos',
+        'reservation',
+        'feedback'
+    ];
+
+    const user = window.firebaseAuth?.currentUser;
+    const isVerifiedOwner =
+        user &&
+        user.email === 'kierstenpadillasalibay@gmail.com' &&
+        user.emailVerified === true;
+
+    const sidebar = document.getElementById('ownerSidebar');
+    const orderPanel = document.getElementById('ownerOrderPanel');
+
+    // Show only the login form when Owner Login is selected
+    if (sectionId === 'ownerLoginSection') {
+        sections.forEach(function(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.style.display =
+                    id === 'ownerLoginSection' ? '' : 'none';
+            }
+        });
+
+        if (sidebar) sidebar.style.display = 'none';
+        if (orderPanel) orderPanel.style.display = 'none';
+        return;
+    }
+
+    // Public view for visitors who are not verified owners
+    if (!isVerifiedOwner) {
+        sections.forEach(function(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.style.display =
+                    publicSections.includes(id) ? '' : 'none';
+            }
+        });
+
+        if (sidebar) sidebar.style.display = 'none';
+        if (orderPanel) orderPanel.style.display = 'none';
+
+        const layout = document.querySelector('.layout');
+if (layout) layout.classList.add('public-view');
+        
+        return;
+    }
+
+    // Owner view after verified login
+    const layout = document.querySelector('.layout');
+if (layout) layout.classList.remove('public-view');
+    
+    sections.forEach(function(id) {
+        const section = document.getElementById(id);
+        if (section) {
+            section.style.display =
+                id === sectionId ? '' : 'none';
         }
     });
 
+    if (sidebar) sidebar.style.display = 'block';
+
+    if (orderPanel) {
+        orderPanel.style.display =
+            sectionId === 'menu-pos' ? 'block' : 'none';
+    }
+
     document.querySelectorAll('.sidebar button').forEach(function(button) {
+        const action = button.getAttribute('onclick') || '';
         button.classList.toggle(
             'active',
-            button.getAttribute('onclick').includes("'" + sectionId + "'")
+            action.includes("'" + sectionId + "'")
         );
     });
 }
   
-showSection('dashboard');
+showSection('home');
     
 function updateSalesReport() {
     const sales = JSON.parse(
@@ -2268,3 +2358,4 @@ await window.saveCustomerFeedback({
 </script>
 </body>
 </html>
+
