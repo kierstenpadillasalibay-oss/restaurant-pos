@@ -1669,16 +1669,14 @@ reservationForm.addEventListener("submit", async function(event) {
     message.textContent = "Submitting your reservation request...";
 
     try {
-        await addDoc(collection(db, "reservations"), {
-            name: name,
-            phone: phone,
-            date: date,
-            time: time,
-            guests: guests,
-            status: "Pending",
-            createdAt: serverTimestamp()
-        });
-
+await window.saveReservationToFirebase({
+    name: name,
+    phone: phone,
+    date: date,
+    time: time,
+    guests: guests
+});
+        
         message.textContent =
             "Thank you, " + name +
             "! Your reservation request has been submitted. The restaurant must confirm it.";
@@ -1722,6 +1720,18 @@ import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orde
   const db = getFirestore(app);
 
   window.firebaseAuth = auth;
+    window.firebaseDb = db;
+window.saveReservationToFirebase = async function (reservation) {
+  return await addDoc(collection(db, "reservations"), {
+    name: reservation.name,
+    phone: reservation.phone,
+    date: reservation.date,
+    time: reservation.time,
+    guests: reservation.guests,
+    status: "Pending",
+    createdAt: serverTimestamp()
+  });
+};
     window.ownerLogin = async function (email, password) {
   const { signInWithEmailAndPassword } =
     await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
