@@ -497,7 +497,92 @@ header p {
 .clear {
     color: #5c5146;
 }
+/* LA MAISON - COMPACT FONT AND SPACING */
+body {
+    font-size: 14px;
+    line-height: 1.4;
+}
 
+header {
+    padding: 16px 22px;
+}
+
+header h1 {
+    font-size: 26px;
+    letter-spacing: 1px;
+    margin: 0 0 6px;
+}
+
+header p {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+.categories {
+    padding: 16px 10px;
+}
+
+.categories h3 {
+    margin-bottom: 14px;
+    font-size: 15px;
+}
+
+.category-btn {
+    padding: 10px 8px;
+    font-size: 13px;
+}
+
+.menu {
+    padding: 20px;
+}
+
+.menu h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.menu-grid {
+    gap: 14px;
+}
+
+.menu-card {
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.menu-card h3 {
+    font-size: 16px;
+    line-height: 1.3;
+    margin: 0 0 8px;
+}
+
+.description {
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.price {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.add-btn {
+    padding: 10px;
+    font-size: 13px;
+}
+
+.order {
+    padding: 18px 16px;
+}
+
+.order h2 {
+    font-size: 21px;
+    padding-bottom: 10px;
+}
+
+.total {
+    font-size: 22px;
+}
 @media (max-width: 900px) {
     .layout {
         grid-template-columns: 1fr;
@@ -2225,6 +2310,73 @@ window.filterOwnerFeedback = function (filter) {
 
     .feedback-card h2 {
         font-size: 28px;
+    }
+}
+    /* LA MAISON - COMPACT CUSTOMER FEEDBACK */
+.feedback-section {
+    padding: 35px 18px;
+}
+
+.feedback-card {
+    max-width: 620px;
+    padding: 26px;
+    border-radius: 12px;
+}
+
+.feedback-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.feedback-card h2 {
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.feedback-card > p:not(.feedback-label) {
+    font-size: 13px;
+    line-height: 1.45;
+    margin-bottom: 18px;
+}
+
+#feedbackForm label {
+    margin: 12px 0 6px;
+    font-size: 12px;
+}
+
+#feedbackForm input,
+#feedbackForm select,
+#feedbackForm textarea {
+    padding: 9px 11px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+.feedback-submit {
+    min-height: 40px;
+    margin-top: 16px;
+    padding: 10px 14px;
+    font-size: 13px;
+}
+
+#feedbackMessage {
+    font-size: 13px;
+    line-height: 1.45;
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    .feedback-section {
+        padding: 24px 12px;
+    }
+
+    .feedback-card {
+        padding: 20px 16px;
+    }
+
+    .feedback-card h2 {
+        font-size: 23px;
     }
 }
 </style>
