@@ -1195,13 +1195,21 @@ background-repeat: no-repeat;
             <h3>Discount</h3>
 
     <label for="discountPercent">Discount Percentage (%)</label>
-<select id="discountPercent" style="width:100%;padding:10px;margin-top:5px;" onchange="updateOrder()">
+<select id="discountPercent" style="width:100%;padding:10px;margin-top:5px;" onchange="handleDiscountChange()">
     <option value="0">No Discount</option>
-        <option value="5">5% Discount</option>
-        <option value="10">10% Discount</option>
-        <option value="15">15% Discount</option>
-    </select>
+    <option value="senior">Senior Citizen - 20%</option>
+    <option value="pwd">PWD - 20%</option>
+    <option value="promo5">Promo - 5%</option>
+    <option value="promo10">Promo - 10%</option>
+    <option value="promo15">Promo - 15%</option>
+    <option value="custom">Custom Promo (%)</option>
+</select>
 
+<div id="customDiscountContainer" style="display:none;margin-top:10px;">
+    <label for="customDiscountPercent">Custom Promo Percentage (%)</label>
+    <input type="number" id="customDiscountPercent" min="0" max="100" step="0.01" placeholder="Enter promo percentage" style="width:100%;padding:10px;margin-top:5px;box-sizing:border-box;" oninput="updateOrder()">
+</div>
+                
     <p style="margin-bottom:0;">
         Discount Amount: ₱<span id="discountAmount">0.00</span>
     </p>
@@ -1400,9 +1408,18 @@ function addItem(name, price) {
 
     updateOrder();
 }
+function handleDiscountChange() {
+    const discountType = document.getElementById("discountPercent").value;
+    const customContainer = document.getElementById("customDiscountContainer");
 
+    if (customContainer) {
+        customContainer.style.display =
+            discountType === "custom" ? "block" : "none";
+    }
+
+    updateOrder();
+}
 function updateOrder() {
-
     const orderList = document.getElementById("orderList");
 
     if (order.length === 0) {
@@ -1438,12 +1455,26 @@ const subtotal = order.reduce(
     0
 );
 
-const discountPercent = Number(
-    document.getElementById("discountPercent").value || 0
-);
+const discountType = document.getElementById("discountPercent").value;
+
+let discountPercent = 0;
+
+if (discountType === "promo5") {
+    discountPercent = 5;
+} else if (discountType === "promo10") {
+    discountPercent = 10;
+} else if (discountType === "promo15") {
+    discountPercent = 15;
+} else if (discountType === "custom") {
+    discountPercent = Number(
+        document.getElementById("customDiscountPercent").value || 0
+    );
+}
+
+discountPercent = Math.min(100, Math.max(0, discountPercent));
 
 const discountAmount = subtotal * (discountPercent / 100);
-const finalTotal = subtotal - discountAmount;    
+const finalTotal = subtotal - discountAmount;
 document.getElementById("itemCount").innerText =
     order.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
@@ -1466,7 +1497,9 @@ function clearOrder() {
 order = [];
 
 document.getElementById("discountPercent").value = "0";
-
+document.getElementById("customDiscountPercent").value = "";
+document.getElementById("customDiscountContainer").style.display = "none";
+    
 updateOrder();
 
     document.getElementById("amountPaid").value = "";
@@ -1488,9 +1521,29 @@ const subtotal = order.reduce(
     0
 );
 
-const discountPercent = Number(
-    document.getElementById("discountPercent").value || 0
-);
+const discountType = document.getElementById("discountPercent").value;
+
+let discountPercent = 0;
+
+if (discountType === "senior" || discountType === "pwd") {
+    alert("Senior Citizen/PWD discount setup is not finished yet. Please select a promo or No Discount for now.");
+    return;
+} else if (discountType === "promo5") {
+    discountPercent = 5;
+} else if (discountType === "promo10") {
+    discountPercent = 10;
+} else if (discountType === "promo15") {
+    discountPercent = 15;
+} else if (discountType === "custom") {
+    discountPercent = Number(
+        document.getElementById("customDiscountPercent").value || 0
+    );
+
+    if (!Number.isFinite(discountPercent) || discountPercent < 0 || discountPercent > 100) {
+        alert("Please enter a promo percentage from 0 to 100.");
+        return;
+    }
+}
 
 const discountAmount = subtotal * (discountPercent / 100);
 const total = subtotal - discountAmount;
@@ -1531,6 +1584,7 @@ const completedSale = {
     orderNumber: orderNumber,
     date: new Date().toISOString(),
     displayDate: date,
+    discountType: discountType,
     subtotal: subtotal,
     discountPercent: discountPercent,
     discountAmount: discountAmount,
@@ -1563,8 +1617,8 @@ localStorage.setItem(
     <p><strong>Date:</strong> ${date}</p>
     <p><strong>Payment Method:</strong> ${paymentMethod}</p>
     <p><strong>Subtotal:</strong> ₱${subtotal.toFixed(2)}</p>
-    <p><strong>Discount (${discountPercent}%):</strong> -₱${discountAmount.toFixed(2)}</p>
-    <p><strong>Amount Paid:</strong> ₱${amountPaid.toFixed(2)}</p>
+<p><strong>Discount (${discountType === "promo5" ? "Promo 5%" : discountType === "promo10" ? "Promo 10%" : discountType === "promo15" ? "Promo 15%" : discountType === "custom" ? "Custom Promo " + discountPercent + "%" : "No Discount"}):</strong> -₱${discountAmount.toFixed(2)}</p>
+<p><strong>Amount Paid:</strong> ₱${amountPaid.toFixed(2)}</p>
     <p><strong>Change:</strong> ₱${change.toFixed(2)}</p>
     <hr>
 `;
