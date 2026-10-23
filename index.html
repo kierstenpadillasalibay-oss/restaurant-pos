@@ -1471,9 +1471,11 @@ if (discountType === "promo5") {
     );
 }
 
-discountPercent = Math.min(100, Math.max(0, discountPercent));
+discountPercent = Math.max(0, discountPercent);
+    
+const validDiscountPercent = Math.min(100, discountPercent);
 
-const discountAmount = subtotal * (discountPercent / 100);
+const discountAmount = subtotal * (validDiscountPercent / 100);
 const finalTotal = subtotal - discountAmount;
 document.getElementById("itemCount").innerText =
     order.reduce((sum, item) => sum + (item.quantity || 1), 0);
