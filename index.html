@@ -972,10 +972,15 @@ background-repeat: no-repeat;
         <button onclick="showSection('menu-pos')">Menu &amp; POS</button>
         <button onclick="showSection('salesReport')">Sales Report</button>
         <button onclick="showSection('reservation')">Reservations</button>
-        <button onclick="showSection('feedback')">Customer Feedback</button>
+    
         <button onclick="showSection('ownerLoginSection')">Owner Login</button>
+    
 <button onclick="showSection('ownerFeedbackDashboard'); loadOwnerFeedback();">
     Customer Feedback
+</button>
+    
+    <button onclick="showSection('ownerReservationsDashboard'); loadOwnerReservations();">
+    Customer Reservations
 </button>
     </aside>
     <div class="app-content">
@@ -1051,6 +1056,18 @@ background-repeat: no-repeat;
 
     <button type="button" onclick="loadOwnerFeedback()">
         Refresh Feedback
+    </button>
+</section>
+        <section id="ownerReservationsDashboard" class="dashboard-section" style="display: none;">
+    <h2>Customer Reservations</h2>
+    <p>View reservation requests submitted by your customers.</p>
+
+    <div id="ownerReservationsList">
+        <p>Click Refresh Reservations to load bookings.</p>
+    </div>
+
+    <button type="button" onclick="loadOwnerReservations()">
+        Refresh Reservations
     </button>
 </section>
 <section class="home-section" id="home">
@@ -1732,6 +1749,72 @@ window.saveReservationToFirebase = async function (reservation) {
     createdAt: serverTimestamp()
   });
 };
+    window.loadOwnerReservations = async function () {
+  const user = auth.currentUser;
+  const list = document.getElementById("ownerReservationsList");
+
+  if (!list) return;
+
+  if (
+    !user ||
+    user.email !== "kierstenpadillasalibay@gmail.com" ||
+    user.emailVerified !== true
+  ) {
+    list.textContent = "Please log in using the verified owner account.";
+    return;
+  }
+
+  list.textContent = "Loading reservations...";
+
+  try {
+    const reservationQuery = query(
+      collection(db, "reservations"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(reservationQuery);
+    list.replaceChildren();
+
+    if (snapshot.empty) {
+      list.textContent = "No reservations found yet.";
+      return;
+    }
+
+    snapshot.forEach(function (docSnap) {
+      const reservation = docSnap.data();
+      const card = document.createElement("div");
+      card.className = "dashboard-card";
+
+      const details = [
+        ["Customer", reservation.name],
+        ["Contact", reservation.phone],
+        ["Date", reservation.date],
+        ["Time", reservation.time],
+        ["Guests", reservation.guests],
+        ["Status", reservation.status]
+      ];
+
+      details.forEach(function (item) {
+        const paragraph = document.createElement("p");
+        const label = document.createElement("strong");
+
+        label.textContent = item[0] + ": ";
+        paragraph.appendChild(label);
+        paragraph.appendChild(
+          document.createTextNode(String(item[1] ?? ""))
+        );
+
+        card.appendChild(paragraph);
+      });
+
+      list.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Reservation loading failed:", error);
+    list.textContent =
+      "Unable to load reservations. Please check your owner login and Firebase rules.";
+  }
+};
     window.ownerLogin = async function (email, password) {
   const { signInWithEmailAndPassword } =
     await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
@@ -1814,6 +1897,7 @@ document.getElementById("ownerOrderPanel").style.display = "block";
         createdAt: serverTimestamp()
     });
 };
+    
 window.saveSaleToFirebase = async function (sale) {
   try {
     const { collection, addDoc, serverTimestamp } =
@@ -2247,8 +2331,9 @@ function showSection(sectionId) {
         'salesReport',
         'reservation',
         'feedback',
-        'ownerLoginSection',
-        'ownerFeedbackDashboard'
+'ownerLoginSection',
+'ownerFeedbackDashboard',
+'ownerReservationsDashboard'
     ];
 
     const publicSections = [
