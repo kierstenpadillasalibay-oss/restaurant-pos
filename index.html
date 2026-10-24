@@ -1272,7 +1272,11 @@ header p {
     <button onclick="showSection('ownerReservationsDashboard'); loadOwnerReservations();">
     Customer Reservations
 </button>
-    </aside>
+    
+    <button onclick="showSection('menuEngineeringDashboard');">
+    Menu Engineering
+</button>
+</aside>
     <div class="app-content">
 <nav class="main-nav">
     <a href="#home">Home</a>
@@ -1360,6 +1364,76 @@ header p {
         Refresh Reservations
     </button>
 </section>
+       <!-- LA MAISON MENU ENGINEERING DASHBOARD -->
+<section id="menuEngineeringDashboard" class="dashboard-section" style="display: none;">
+
+    <h2>Menu Engineering</h2>
+    <p>Analyze menu profitability, popularity, and performance.</p>
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <h3>Total Menu Items</h3>
+            <p id="meTotalItems">0</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Total Units Sold</h3>
+            <p id="meTotalUnits">0</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Average Profit Margin</h3>
+            <p id="meAverageMargin">—</p>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Estimated Gross Profit</h3>
+            <p id="meEstimatedProfit">₱0.00</p>
+        </div>
+
+    </div>
+
+    <h3>Food Cost Calculator</h3>
+    <div class="dashboard-card">
+
+        <label for="meMenuItem">Select Menu Item</label>
+        <select id="meMenuItem">
+            <option value="">Select a menu item</option>
+        </select>
+
+        <label for="meIngredientCost">Ingredient Cost per Serving (₱)</label>
+        <input id="meIngredientCost" type="number" min="0" step="0.01"
+            placeholder="Enter ingredient cost">
+
+        <button type="button" onclick="saveMenuIngredientCost()">
+            Save Ingredient Cost
+        </button>
+
+        <p id="meCostMessage" role="status"></p>
+    </div>
+
+    <h3>Sales Popularity Ranking</h3>
+    <div id="meSalesRanking" class="dashboard-card">
+        Sales ranking will appear here.
+    </div>
+
+    <h3>Menu Engineering Matrix</h3>
+    <div id="meEngineeringMatrix" class="dashboard-card">
+        Menu performance matrix will appear here.
+    </div>
+
+    <h3>Menu Recommendations</h3>
+    <div id="meRecommendations" class="dashboard-card">
+        Recommendations will appear here.
+    </div>
+
+    <button type="button" onclick="loadMenuEngineering()">
+        Refresh Menu Analysis
+    </button>
+
+</section>
+<!-- END MENU ENGINEERING DASHBOARD --> 
 <section class="home-section" id="home">
     <p class="home-label">WELCOME TO LA MAISON</p>
     <h2>A Taste of Elegance</h2>
@@ -2720,9 +2794,10 @@ function showSection(sectionId) {
         'salesReport',
         'reservation',
         'feedback',
-'ownerLoginSection',
-'ownerFeedbackDashboard',
-'ownerReservationsDashboard'
+    'ownerLoginSection',
+    'ownerFeedbackDashboard',
+    'ownerReservationsDashboard',
+        'menuEngineeringDashboard'
     ];
 
     const publicSections = [
@@ -2792,8 +2867,12 @@ if (layout) layout.classList.remove('public-view');
     if (orderPanel) {
         orderPanel.style.display =
             sectionId === 'menu-pos' ? 'block' : 'none';
-    }
-
+}
+    
+if (sectionId === 'menuEngineeringDashboard') {
+    initializeMenuEngineering();
+    loadMenuEngineering();
+}
     document.querySelectorAll('.sidebar button').forEach(function(button) {
         const action = button.getAttribute('onclick') || '';
         button.classList.toggle(
@@ -2804,7 +2883,140 @@ if (layout) layout.classList.remove('public-view');
 }
   
 showSection('home');
-    
+function loadMenuEngineering() {
+    const ranking = document.getElementById("meSalesRanking");
+    const matrix = document.getElementById("meEngineeringMatrix");
+    const recommendations = document.getElementById("meRecommendations");
+
+    if (!Array.isArray(menu)) return;
+
+    let sales = [];
+    try {
+        sales = JSON.parse(localStorage.getItem("laMaisonSales") || "[]");
+    } catch (error) {
+        console.error("Unable to read sales:", error);
+    }
+
+    const costs = getMenuIngredientCosts();
+    const items = menu.map(item => {
+        let units = 0;
+
+        sales.forEach(sale => {
+            (sale.items || []).forEach(soldItem => {
+                if (soldItem.name === item.name) {
+                    units += Number(soldItem.quantity || 1);
+                }
+            });
+        });
+
+        const hasCost = Object.prototype.hasOwnProperty.call(
+            costs, item.name
+        );
+        const cost = hasCost ? Number(costs[item.name]) : null;
+        const profit = hasCost ? Number(item.price) - cost : null;
+        const margin = hasCost && Number(item.price) > 0
+            ? profit / Number(item.price) * 100
+            : null;
+
+        return { ...item, units, hasCost, cost, profit, margin };
+    });
+
+    const totalUnits = items.reduce((sum, item) => sum + item.units, 0);
+    const averageMarginItems = items.filter(item => item.margin !== null);
+    const averageMargin = averageMarginItems.length
+        ? averageMarginItems.reduce((sum, item) => sum + item.margin, 0)
+            / averageMarginItems.length
+        : null;
+
+    const estimatedProfit = items.reduce((sum, item) =>
+        sum + (item.hasCost ? item.profit * item.units : 0), 0
+    );
+
+    document.getElementById("meTotalItems").textContent = items.length;
+    document.getElementById("meTotalUnits").textContent = totalUnits;
+    document.getElementById("meAverageMargin").textContent =
+        averageMargin === null ? "Add ingredient costs" :
+        averageMargin.toFixed(1) + "%";
+    document.getElementById("meEstimatedProfit").textContent =
+        "₱" + estimatedProfit.toFixed(2);
+
+    const sorted = [...items].sort((a, b) => b.units - a.units);
+
+    if (ranking) {
+        ranking.innerHTML = sorted.map((item, index) => `
+            <div style="padding:8px 0;border-bottom:1px solid #e4d5bf;">
+                <strong>${index + 1}. ${item.name}</strong>
+                <span> — ${item.units} sold</span>
+                <span> — Margin: ${
+                    item.margin === null ? "Cost needed" :
+                    item.margin.toFixed(1) + "%"
+                }</span>
+            </div>
+        `).join("");
+    }
+
+    const soldItems = items.filter(item => item.units > 0);
+    const averagePopularity = soldItems.length
+        ? totalUnits / items.length
+        : 0;
+    const knownMargins = items.filter(item => item.margin !== null);
+    const averageKnownMargin = knownMargins.length
+        ? knownMargins.reduce((sum, item) => sum + item.margin, 0)
+            / knownMargins.length
+        : null;
+
+    items.forEach(item => {
+        if (item.units === 0 || item.margin === null ||
+            averageKnownMargin === null) {
+            item.categoryLabel = "Needs more data";
+        } else {
+            const popular = item.units >= averagePopularity;
+            const highMargin = item.margin >= averageKnownMargin;
+
+            item.categoryLabel = popular
+                ? (highMargin ? "Star" : "Plowhorse")
+                : (highMargin ? "Puzzle" : "Dog");
+        }
+    });
+
+    if (matrix) {
+        matrix.innerHTML = items.map(item => `
+            <div style="padding:8px 0;border-bottom:1px solid #e4d5bf;">
+                <strong>${item.name}</strong> — ${item.categoryLabel}
+                <div>Units sold: ${item.units}</div>
+                <div>Profit per serving: ${
+                    item.profit === null ? "Enter ingredient cost" :
+                    "₱" + item.profit.toFixed(2)
+                }</div>
+            </div>
+        `).join("");
+    }
+
+    if (recommendations) {
+        recommendations.innerHTML = items.map(item => {
+            let advice = "";
+
+            if (item.margin === null) {
+                advice = "Enter ingredient cost to calculate profitability.";
+            } else if (item.categoryLabel === "Star") {
+                advice = "Keep quality consistent and maintain its visibility.";
+            } else if (item.categoryLabel === "Plowhorse") {
+                advice = "Review portion cost and pricing without reducing quality.";
+            } else if (item.categoryLabel === "Puzzle") {
+                advice = "Try improving menu placement and staff recommendations.";
+            } else if (item.categoryLabel === "Dog") {
+                advice = "Review demand, recipe cost, and whether it should remain on the menu.";
+            } else {
+                advice = "Record more sales before classifying this item.";
+            }
+
+            return `<div style="padding:8px 0;border-bottom:1px solid #e4d5bf;">
+                <strong>${item.name}:</strong> ${advice}
+            </div>`;
+        }).join("");
+    }
+}
+
 function updateSalesReport() {
     const sales = JSON.parse(
         localStorage.getItem("laMaisonSales") || "[]"
@@ -2895,6 +3107,87 @@ await window.saveCustomerFeedback({
         }
     });
 }
+    /* LA MAISON MENU ENGINEERING - INGREDIENT COST STORAGE */
+function getMenuIngredientCosts() {
+    try {
+        return JSON.parse(
+            localStorage.getItem("laMaisonIngredientCosts") || "{}"
+        );
+    } catch (error) {
+        console.error("Unable to read ingredient costs:", error);
+        return {};
+    }
+}
+    function saveMenuIngredientCost() {
+    const itemName = document.getElementById("meMenuItem")?.value;
+    const costInput = document.getElementById("meIngredientCost");
+    const message = document.getElementById("meCostMessage");
+
+    if (!itemName) {
+        if (message) message.textContent = "Please select a menu item.";
+        return;
+    }
+
+    const cost = Number(costInput?.value);
+
+    if (
+        costInput.value.trim() === "" ||
+        !Number.isFinite(cost) ||
+        cost < 0
+    ) {
+        if (message) {
+            message.textContent = "Please enter a valid ingredient cost.";
+        }
+        return;
+    }
+
+    const costs = getMenuIngredientCosts();
+    costs[itemName] = cost;
+
+    try {
+        localStorage.setItem(
+            "laMaisonIngredientCosts",
+            JSON.stringify(costs)
+        );
+
+        if (message) {
+            message.textContent =
+                "Ingredient cost saved for " + itemName + ".";
+        }
+
+        costInput.value = "";
+
+        if (typeof loadMenuEngineering === "function") {
+            loadMenuEngineering();
+        }
+    } catch (error) {
+        console.error("Unable to save ingredient cost:", error);
+
+        if (message) {
+            message.textContent =
+                "Unable to save the cost. Please try again.";
+        }
+    }
+}
+    function initializeMenuEngineering() {
+    const select = document.getElementById("meMenuItem");
+
+    if (!select || !Array.isArray(menu)) {
+        return;
+    }
+
+    select.innerHTML = '<option value="">Select a menu item</option>';
+
+    menu.forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.name;
+        option.textContent = item.name + " — ₱" +
+            Number(item.price).toFixed(2);
+        select.appendChild(option);
+    });
+}
+
+initializeMenuEngineering();
 </script>
 </body>
 </html>
